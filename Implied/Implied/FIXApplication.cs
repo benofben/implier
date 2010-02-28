@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Threading;
 using QuickFix;
 
@@ -12,7 +11,6 @@ namespace Implied
         SocketInitiator initiator;
         FormImplied form;
         SessionID sessionID;
-        TextWriter tw;
 
         public FIXApplication()
         {
@@ -36,8 +34,6 @@ namespace Implied
             {
                 consoleText = exception.Message + Environment.NewLine;
             }
-
-            tw = new StreamWriter("symbols.txt");
            
         }
 
@@ -54,8 +50,6 @@ namespace Implied
                 consoleText = exception.Message + Environment.NewLine + consoleText;
                 form.Invoke(form.consoleDelegate);
             }
-
-            tw.Close();
         }
 
         public void onCreate(SessionID sessionID)
@@ -78,13 +72,13 @@ namespace Implied
         public void toAdmin(Message message, SessionID sessionID)
         {
             consoleText = "toAdmin " + message.ToString() + Environment.NewLine + consoleText;
-            form.Invoke(form.consoleDelegate);
+            //form.Invoke(form.consoleDelegate);
         }
 
         public void toApp(Message message, SessionID sessionID)
         {
-            //consoleText = "toApp " + message.ToString() + Environment.NewLine + consoleText;
-            //form.Invoke(form.consoleDelegate);
+            consoleText = "toApp " + message.ToString() + Environment.NewLine + consoleText;
+            form.Invoke(form.consoleDelegate);
         }
 
         public void fromAdmin(Message message, SessionID sessionID)
@@ -126,42 +120,22 @@ namespace Implied
 
         public override void onMessage(QuickFix42.SecurityDefinition securityDefinition, SessionID sessionID)
         {
-            tw.WriteLine(securityDefinition.ToString());
-            //consoleText = "securityDefinition " + securityDefinition.ToString() + Environment.NewLine + consoleText;
+            consoleText = "securityDefinition " + securityDefinition.ToString() + Environment.NewLine + consoleText;
             //form.Invoke(form.consoleDelegate);
 
-            QuickFix42.MarketDataRequest marketDataRequest = 
-                new QuickFix42.MarketDataRequest(new MDReqID(DateTime.Now.ToString()), 
-                new SubscriptionRequestType(SubscriptionRequestType.SNAPSHOT_PLUS_UPDATES), 
-                new MarketDepth(1));
+            QuickFix42.MarketDataRequest marketDataRequest = new QuickFix42.MarketDataRequest(new MDReqID(DateTime.Now.ToString()), new SubscriptionRequestType(SubscriptionRequestType.SNAPSHOT_PLUS_UPDATES), new MarketDepth(1));
             marketDataRequest.setField(new MDUpdateType(MDUpdateType.FULL_REFRESH));
             marketDataRequest.setField(new AggregatedBook(true));
             
-            QuickFix42.MarketDataRequest.NoMDEntryTypes marketDataEntyGroupBid = new QuickFix42.MarketDataRequest.NoMDEntryTypes();
-            marketDataEntyGroupBid.set(new MDEntryType(MDEntryType.BID));
-            marketDataRequest.addGroup(marketDataEntyGroupBid);
-
-            QuickFix42.MarketDataRequest.NoMDEntryTypes marketDataEntyGroupOffer = new QuickFix42.MarketDataRequest.NoMDEntryTypes();
-            marketDataEntyGroupOffer.set(new MDEntryType(MDEntryType.OFFER));
-            marketDataRequest.addGroup(marketDataEntyGroupOffer);
-
-            QuickFix42.MarketDataRequest.NoRelatedSym noRelatedSym = new QuickFix42.MarketDataRequest.NoRelatedSym();
-
             SecurityExchange securityExchange = new SecurityExchange();
             securityDefinition.getField(securityExchange);
-            noRelatedSym.setField(securityExchange);
+            marketDataRequest.setField(securityExchange);
 
-            SecurityType securityType = new SecurityType();
-            securityDefinition.getField(securityType);
-            noRelatedSym.setField(securityType);
+            QuickFix42.MarketDataRequest.NoRelatedSym noRelatedSym = new QuickFix42.MarketDataRequest.NoRelatedSym();
             
             Symbol symbol = new Symbol();
             securityDefinition.getField(symbol);
             noRelatedSym.setField(symbol);
-
-            //MaturityMonthYear maturityMonthYear = new MaturityMonthYear();
-            //securityDefinition.getField(maturityMonthYear);
-            //noRelatedSym.setField(maturityMonthYear);
 
             SecurityID securityID = new SecurityID();
             securityDefinition.getField(securityID);
@@ -175,21 +149,21 @@ namespace Implied
             }
             catch (SessionNotFound exception)
             {
-                //consoleText = exception.Message + Environment.NewLine + consoleText;
-                //form.Invoke(form.consoleDelegate);
+                consoleText = exception.Message + Environment.NewLine + consoleText;
+                form.Invoke(form.consoleDelegate);
             }
         }
 
         public override void onMessage(QuickFix42.MarketDataSnapshotFullRefresh marketDataSnapshotFullRefresh, SessionID sessionID)
         {
-            //consoleText = "marketDataSnapshotFullRefresh " + marketDataSnapshotFullRefresh.ToString() + Environment.NewLine + consoleText;
-            //form.Invoke(form.consoleDelegate);
+            consoleText = "marketDataSnapshotFullRefresh " + marketDataSnapshotFullRefresh.ToString() + Environment.NewLine + consoleText;
+            form.Invoke(form.consoleDelegate);
         }
 
         public override void onMessage(QuickFix42.MarketDataIncrementalRefresh marketDataIncrementalRefresh, SessionID sessionID)
         {
-            //consoleText = "marketDataIncrementalRefresh " + marketDataIncrementalRefresh.ToString() + Environment.NewLine + consoleText;
-            //form.Invoke(form.consoleDelegate);
+            consoleText = "marketDataIncrementalRefresh " + marketDataIncrementalRefresh.ToString() + Environment.NewLine + consoleText;
+            form.Invoke(form.consoleDelegate);
         }
     }
 }

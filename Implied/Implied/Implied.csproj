@@ -60,7 +60,6 @@
     </Compile>
     <Compile Include="Implied.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SpreadMatrix.cs" />
     <EmbeddedResource Include="FormImplied.resx">
       <DependentUpon>FormImplied.cs</DependentUpon>
     </EmbeddedResource>
