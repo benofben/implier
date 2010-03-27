@@ -14,6 +14,7 @@ namespace Implied
     {
         public delegate void UpdateConsole();
         public UpdateConsole consoleDelegate;
+        private SpreadMatrix spreadMatrix;
 
         FIXApplication fixApplication;
 
@@ -45,6 +46,8 @@ namespace Implied
                 fixApplication.requestSymbols(exchange, security);
 
                 // as the symbols come down, the fix app will create subscribers for each one.
+
+                spreadMatrix = new SpreadMatrix(security);
             }
             catch(IndexOutOfRangeException)
             {
