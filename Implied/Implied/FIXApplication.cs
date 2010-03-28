@@ -65,13 +65,13 @@ namespace Implied
 
         public void onLogon(SessionID sessionID)
         {
-            consoleText = "onLogon " + sessionID.toString() + Environment.NewLine + consoleText;
-            //form.Invoke(form.consoleDelegate);
+            consoleText = "onLogon " + sessionID.ToString() + Environment.NewLine + consoleText;
+            form.Invoke(form.consoleDelegate);
         }
 
         public void onLogout(SessionID sessionID)
         {
-            consoleText = "onLogout " + sessionID.toString() + Environment.NewLine + consoleText;
+            consoleText = "onLogout " + sessionID.ToString() + Environment.NewLine + consoleText;
             form.Invoke(form.consoleDelegate);
         }
 
@@ -101,7 +101,7 @@ namespace Implied
         public void fromAdmin(Message message, SessionID sessionID)
         {
             consoleText = "fromAdmin " + message.ToString() + Environment.NewLine + consoleText;
-            form.Invoke(form.consoleDelegate);
+            //form.Invoke(form.consoleDelegate);
         }
 
         public void fromApp(Message message, SessionID sessionID)
