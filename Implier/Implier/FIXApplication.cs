@@ -3,28 +3,21 @@ using System.IO;
 using System.Threading;
 using QuickFix;
 
-namespace Implied
+namespace Implier
 {
     public class FIXApplication : MessageCracker, QuickFix.Application
     {
         public String consoleText; 
         
         SocketInitiator initiator;
-        FormImplied form;
         SessionID sessionID;
         TextWriter tw;
 
-        public FIXApplication()
+        public FIXApplication(String configFile)
         {
-        }
-
-        public FIXApplication(FormImplied parentForm)
-        {
-            form = parentForm;
-
             try
             {
-                SessionSettings settings = new SessionSettings("ImpliedFIX.cfg");
+                SessionSettings settings = new SessionSettings(configFile);
                 FileStoreFactory storeFactory = new FileStoreFactory(settings);
                 FileLogFactory logFactory = new FileLogFactory(settings);
                 MessageFactory messageFactory = new DefaultMessageFactory();
@@ -46,13 +39,11 @@ namespace Implied
             try
             {
                 initiator.stop();
-                consoleText = "Stopped initiator." + Environment.NewLine + consoleText;
-                form.Invoke(form.consoleDelegate);
+                consoleText = consoleText + "Stopped initiator." + Environment.NewLine;
             }
             catch (Exception exception)
             {
-                consoleText = exception.Message + Environment.NewLine + consoleText;
-                form.Invoke(form.consoleDelegate);
+                consoleText = consoleText + exception.Message + Environment.NewLine;
             }
 
             tw.Close();
@@ -65,43 +56,37 @@ namespace Implied
 
         public void onLogon(SessionID sessionID)
         {
-            consoleText = "onLogon " + sessionID.ToString() + Environment.NewLine + consoleText;
-            form.Invoke(form.consoleDelegate);
+            consoleText = consoleText + "onLogon " + sessionID.ToString() + Environment.NewLine;
         }
 
         public void onLogout(SessionID sessionID)
         {
-            consoleText = "onLogout " + sessionID.ToString() + Environment.NewLine + consoleText;
-            form.Invoke(form.consoleDelegate);
+            consoleText = consoleText + "onLogout " + sessionID.ToString() + Environment.NewLine;
         }
 
         public void toAdmin(Message message, SessionID sessionID)
         {
-            ///////////this might not work --- it's never been tested
+            // This is only for the TT dev environment.  The production FIX Adapter does not require a password
             QuickFix.MsgType msgType = new QuickFix.MsgType();
             message.getHeader().getField(msgType);
-            if (msgType.ToString() == QuickFix.MsgType.LOGON)
+            if (msgType.ToString() == QuickFix.MsgType.Logon)
             {
                 string password = "12345678";
                 QuickFix.RawData rawData = new RawData(password);
                 message.getHeader().setField(rawData);
             }
 
-
-            consoleText = "toAdmin " + message.ToString() + Environment.NewLine + consoleText;
-            form.Invoke(form.consoleDelegate);
-        }
-
-        public void toApp(Message message, SessionID sessionID)
-        {
-            //consoleText = "toApp " + message.ToString() + Environment.NewLine + consoleText;
-            //form.Invoke(form.consoleDelegate);
+            consoleText = consoleText + "toAdmin " + message.ToString() + Environment.NewLine;
         }
 
         public void fromAdmin(Message message, SessionID sessionID)
         {
-            consoleText = "fromAdmin " + message.ToString() + Environment.NewLine + consoleText;
-            //form.Invoke(form.consoleDelegate);
+            consoleText = consoleText + "fromAdmin " + message.ToString() + Environment.NewLine;
+        }
+
+        public void toApp(Message message, SessionID sessionID)
+        {
+            consoleText = consoleText + "toApp " + message.ToString() + Environment.NewLine;
         }
 
         public void fromApp(Message message, SessionID sessionID)
@@ -112,9 +97,8 @@ namespace Implied
             }
             catch (QuickFix.UnsupportedMessageType exception)
             {
-                consoleText = "fromApp " + exception + Environment.NewLine + consoleText;
-                consoleText = "fromApp " + message.ToString() + Environment.NewLine + consoleText;
-                form.Invoke(form.consoleDelegate);
+                consoleText = consoleText + "fromApp " + exception + Environment.NewLine;
+                consoleText = consoleText + "fromApp " + message.ToString() + Environment.NewLine;
             }
         }
 
@@ -130,16 +114,14 @@ namespace Implied
             }
             catch (SessionNotFound exception) 
             {
-                consoleText = exception.Message + Environment.NewLine + consoleText;
-                form.Invoke(form.consoleDelegate);            
+                consoleText = consoleText + exception.Message + Environment.NewLine;
             }
         }
 
         public override void onMessage(QuickFix42.SecurityDefinition securityDefinition, SessionID sessionID)
         {
             tw.WriteLine(securityDefinition.ToString());
-            //consoleText = "securityDefinition " + securityDefinition.ToString() + Environment.NewLine + consoleText;
-            //form.Invoke(form.consoleDelegate);
+            consoleText = consoleText + "securityDefinition " + securityDefinition.ToString() + Environment.NewLine;
 
             QuickFix42.MarketDataRequest marketDataRequest = 
                 new QuickFix42.MarketDataRequest(new MDReqID(DateTime.Now.ToString()), 
@@ -186,21 +168,18 @@ namespace Implied
             }
             catch (SessionNotFound exception)
             {
-                //consoleText = exception.Message + Environment.NewLine + consoleText;
-                //form.Invoke(form.consoleDelegate);
+                consoleText = consoleText + exception.Message + Environment.NewLine;
             }
         }
 
         public override void onMessage(QuickFix42.MarketDataSnapshotFullRefresh marketDataSnapshotFullRefresh, SessionID sessionID)
         {
-            //consoleText = "marketDataSnapshotFullRefresh " + marketDataSnapshotFullRefresh.ToString() + Environment.NewLine + consoleText;
-            //form.Invoke(form.consoleDelegate);
+            consoleText = consoleText + "marketDataSnapshotFullRefresh " + marketDataSnapshotFullRefresh.ToString() + Environment.NewLine;
         }
 
         public override void onMessage(QuickFix42.MarketDataIncrementalRefresh marketDataIncrementalRefresh, SessionID sessionID)
         {
-            //consoleText = "marketDataIncrementalRefresh " + marketDataIncrementalRefresh.ToString() + Environment.NewLine + consoleText;
-            //form.Invoke(form.consoleDelegate);
+            consoleText = consoleText + "marketDataIncrementalRefresh " + marketDataIncrementalRefresh.ToString() + Environment.NewLine;
         }
     }
 }
