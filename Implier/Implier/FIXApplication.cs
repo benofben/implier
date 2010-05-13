@@ -1,19 +1,50 @@
 ﻿using System;
 using System.IO;
-using System.Threading;
+using System.Text;
 using QuickFix;
 
 namespace Implier
 {
-    public class FIXApplication : MessageCracker, QuickFix.Application
+   
+    public class FixApplication : MessageCracker, Application
     {
-        public String consoleText; 
-        
-        SocketInitiator initiator;
-        SessionID sessionID;
-        TextWriter tw;
+        #region Fields
+        /// <summary>
+        /// accumulator for messages
+        /// </summary>
+        private readonly StringBuilder consoleText = new StringBuilder(); 
+        /// <summary>
+        /// sync object for thread-safe access to consoleText
+        /// </summary>
+        private readonly object lockObject = new object();
 
-        public FIXApplication(String configFile)
+        readonly SocketInitiator initiator;
+        SessionID sessionId;
+        readonly TextWriter tw;
+        #endregion
+
+        #region Delegaes and Events
+        public delegate void AddTextHandler(object sender, string text);
+        public event AddTextHandler OnTextAdded;
+        #endregion
+
+        #region Properties
+
+        public string ConsoleText
+        {
+            get 
+            {
+                lock (lockObject)
+                {
+                    return consoleText.ToString();
+                }
+            }
+        }
+
+        #endregion
+
+        #region Constructor
+        public FixApplication(String configFile)
         {
             try
             {
@@ -23,70 +54,102 @@ namespace Implier
                 MessageFactory messageFactory = new DefaultMessageFactory();
                 initiator = new SocketInitiator(this, storeFactory, settings, logFactory, messageFactory);
                 initiator.start();
-                consoleText = "Created initiator." + Environment.NewLine;
+                AddText("Created initiator." + Environment.NewLine);
             }
             catch (Exception exception)
             {
-                consoleText = exception.Message + Environment.NewLine;
+                AddText(exception.Message + Environment.NewLine);
             }
 
             tw = new StreamWriter("symbols.txt");
            
         }
+        #endregion
 
-        public void StopFIX()
+        #region Methods
+
+        private void AddText(string text)
+        {
+            lock (lockObject)
+            {
+                consoleText.Append(text);
+            }
+            if (OnTextAdded != null)
+                OnTextAdded(this, text);
+        }
+
+        public void RequestSymbols(String exchange, String symbol)
+        {
+            QuickFix42.SecurityDefinitionRequest message = new QuickFix42.SecurityDefinitionRequest(new SecurityReqID(DateTime.Now.ToString()), new SecurityRequestType(SecurityRequestType.REQUEST_LIST_SECURITIES));
+            message.setField(new Symbol(symbol));
+            message.setField(new SecurityExchange(exchange));
+
+            try
+            {
+                Session.sendToTarget(message, sessionId);
+            }
+            catch (SessionNotFound exception)
+            {
+                AddText(exception.Message + Environment.NewLine);
+            }
+        }
+
+        public void StopFix()
         {
             try
             {
                 initiator.stop();
-                consoleText = consoleText + "Stopped initiator." + Environment.NewLine;
+                initiator.Dispose();
+                AddText("Stopped initiator." + Environment.NewLine);
             }
             catch (Exception exception)
             {
-                consoleText = consoleText + exception.Message + Environment.NewLine;
+                AddText(exception.Message + Environment.NewLine);
             }
 
             tw.Close();
         }
+        #endregion 
 
+        #region QuickFix.Application implementation
         public void onCreate(SessionID sessionID)
         {
-            this.sessionID = sessionID;
+            sessionId = sessionID;
         }
 
         public void onLogon(SessionID sessionID)
         {
-            consoleText = consoleText + "onLogon " + sessionID.ToString() + Environment.NewLine;
+            AddText("onLogon " + sessionID + Environment.NewLine);
         }
 
         public void onLogout(SessionID sessionID)
         {
-            consoleText = consoleText + "onLogout " + sessionID.ToString() + Environment.NewLine;
+            AddText("onLogout " + sessionID + Environment.NewLine);
         }
 
         public void toAdmin(Message message, SessionID sessionID)
         {
             // This is only for the TT dev environment.  The production FIX Adapter does not require a password
-            QuickFix.MsgType msgType = new QuickFix.MsgType();
+            MsgType msgType = new MsgType();
             message.getHeader().getField(msgType);
-            if (msgType.ToString() == QuickFix.MsgType.Logon)
+            if (msgType.ToString() == MsgType.Logon)
             {
-                string password = "12345678";
-                QuickFix.RawData rawData = new RawData(password);
+                const string password = "12345678";
+                RawData rawData = new RawData(password);
                 message.getHeader().setField(rawData);
             }
 
-            consoleText = consoleText + "toAdmin " + message.ToString() + Environment.NewLine;
+            AddText("toAdmin " + message + Environment.NewLine);
         }
 
         public void fromAdmin(Message message, SessionID sessionID)
         {
-            consoleText = consoleText + "fromAdmin " + message.ToString() + Environment.NewLine;
+            AddText("fromAdmin " + message + Environment.NewLine);
         }
 
         public void toApp(Message message, SessionID sessionID)
         {
-            consoleText = consoleText + "toApp " + message.ToString() + Environment.NewLine;
+            AddText("toApp " + message + Environment.NewLine);
         }
 
         public void fromApp(Message message, SessionID sessionID)
@@ -95,33 +158,19 @@ namespace Implier
             {
                 crack(message, sessionID);
             }
-            catch (QuickFix.UnsupportedMessageType exception)
+            catch (UnsupportedMessageType exception)
             {
-                consoleText = consoleText + "fromApp " + exception + Environment.NewLine;
-                consoleText = consoleText + "fromApp " + message.ToString() + Environment.NewLine;
+                AddText("fromApp " + exception + Environment.NewLine);
+                AddText("fromApp " + message + Environment.NewLine);
             }
         }
+        #endregion
 
-        public void requestSymbols(String exchange, String symbol)
-        {
-            QuickFix42.SecurityDefinitionRequest message = new QuickFix42.SecurityDefinitionRequest(new SecurityReqID(DateTime.Now.ToString()), new SecurityRequestType(SecurityRequestType.REQUEST_LIST_SECURITIES));
-            message.setField(new Symbol(symbol));
-            message.setField(new SecurityExchange(exchange));
-
-            try
-            {
-                Session.sendToTarget(message, sessionID);
-            }
-            catch (SessionNotFound exception) 
-            {
-                consoleText = consoleText + exception.Message + Environment.NewLine;
-            }
-        }
-
+        #region MessageCracker overrides
         public override void onMessage(QuickFix42.SecurityDefinition securityDefinition, SessionID sessionID)
         {
             tw.WriteLine(securityDefinition.ToString());
-            consoleText = consoleText + "securityDefinition " + securityDefinition.ToString() + Environment.NewLine;
+            AddText("securityDefinition " + securityDefinition + Environment.NewLine);
 
             QuickFix42.MarketDataRequest marketDataRequest = 
                 new QuickFix42.MarketDataRequest(new MDReqID(DateTime.Now.ToString()), 
@@ -156,9 +205,9 @@ namespace Implier
             //securityDefinition.getField(maturityMonthYear);
             //noRelatedSym.setField(maturityMonthYear);
 
-            SecurityID securityID = new SecurityID();
-            securityDefinition.getField(securityID);
-            noRelatedSym.setField(securityID);
+            SecurityID securityId = new SecurityID();
+            securityDefinition.getField(securityId);
+            noRelatedSym.setField(securityId);
             
             marketDataRequest.addGroup(noRelatedSym);
 
@@ -168,18 +217,20 @@ namespace Implier
             }
             catch (SessionNotFound exception)
             {
-                consoleText = consoleText + exception.Message + Environment.NewLine;
+                AddText(exception.Message + Environment.NewLine);
             }
+
         }
 
         public override void onMessage(QuickFix42.MarketDataSnapshotFullRefresh marketDataSnapshotFullRefresh, SessionID sessionID)
         {
-            consoleText = consoleText + "marketDataSnapshotFullRefresh " + marketDataSnapshotFullRefresh.ToString() + Environment.NewLine;
+            AddText("marketDataSnapshotFullRefresh " + marketDataSnapshotFullRefresh + Environment.NewLine);
         }
 
         public override void onMessage(QuickFix42.MarketDataIncrementalRefresh marketDataIncrementalRefresh, SessionID sessionID)
         {
-            consoleText = consoleText + "marketDataIncrementalRefresh " + marketDataIncrementalRefresh.ToString() + Environment.NewLine;
+            AddText("marketDataIncrementalRefresh " + marketDataIncrementalRefresh + Environment.NewLine);
         }
+        #endregion
     }
 }
