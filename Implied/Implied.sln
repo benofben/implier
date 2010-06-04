@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Implier", "Implier\Implier.csproj", "{6DD05F79-FBAE-4B48-ABF7-7B2FA84105C9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Implied", "Implied\Implied.csproj", "{8773C216-310A-49C8-8A67-CB22B0E93FA6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +9,10 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6DD05F79-FBAE-4B48-ABF7-7B2FA84105C9}.Debug|x86.ActiveCfg = Debug|x86
-		{6DD05F79-FBAE-4B48-ABF7-7B2FA84105C9}.Debug|x86.Build.0 = Debug|x86
-		{6DD05F79-FBAE-4B48-ABF7-7B2FA84105C9}.Release|x86.ActiveCfg = Release|x86
-		{6DD05F79-FBAE-4B48-ABF7-7B2FA84105C9}.Release|x86.Build.0 = Release|x86
+		{8773C216-310A-49C8-8A67-CB22B0E93FA6}.Debug|x86.ActiveCfg = Debug|x86
+		{8773C216-310A-49C8-8A67-CB22B0E93FA6}.Debug|x86.Build.0 = Debug|x86
+		{8773C216-310A-49C8-8A67-CB22B0E93FA6}.Release|x86.ActiveCfg = Release|x86
+		{8773C216-310A-49C8-8A67-CB22B0E93FA6}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
