@@ -1,0 +1,69 @@
+﻿<Windows:BaseUpdatableWindow x:Class="Implier.PureArbitrageWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="PureArbitrageWindow" Height="300" Width="750" xmlns:my="clr-namespace:Implier.PureArbitrage" xmlns:Windows="clr-namespace:Implier.CommonControls.Windows" Closed="BaseUpdatableWindow_Closed">
+    <!--Grid>
+        <Label Content="Exchange" Height="28" HorizontalAlignment="Left" Margin="12,12,0,0" Name="label1" VerticalAlignment="Top" />
+        <Label Content="Symbol" Height="28" HorizontalAlignment="Left" Margin="78,12,0,0" Name="label2" VerticalAlignment="Top" />
+        <Label Content="Max Quantity" Height="28" HorizontalAlignment="Left" Margin="134,12,0,0" Name="label3" VerticalAlignment="Top" />
+        <Label Content="Ticks" Height="28" HorizontalAlignment="Left" Margin="217,12,0,0" Name="label4" VerticalAlignment="Top" />
+        <Label Content="Legs" Height="28" HorizontalAlignment="Left" Margin="320,12,0,0" Name="label5" VerticalAlignment="Top" />
+        <Label Content="$Cost/Leg" Height="28" HorizontalAlignment="Left" Margin="360,12,0,0" Name="label6" VerticalAlignment="Top" />
+        <Label Content="$Profit/Trade" Height="28" HorizontalAlignment="Left" Margin="430,12,0,0" Name="label7" VerticalAlignment="Top" />
+        <Label Content="Buy Quantity" Height="28" HorizontalAlignment="Left" Margin="516,12,0,0" Name="label8" VerticalAlignment="Top" />
+        <Label Content="Total" Height="28" HorizontalAlignment="Left" Margin="600,12,0,0" Name="label9" VerticalAlignment="Top" />
+        <Label Content="Buy" Height="28" HorizontalAlignment="Left" Margin="661,12,0,0" Name="label10" VerticalAlignment="Top" />
+        <Button Content="Buy" Height="23" HorizontalAlignment="Left" Margin="661,38,0,0" Name="button1" VerticalAlignment="Top" Width="38" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="12,37,0,0" Name="textBox1" VerticalAlignment="Top" Width="60" Text="CME" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="12,66,0,0" Name="textBox2" Text="CME" VerticalAlignment="Top" Width="60" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="12,95,0,0" Name="textBox3" Text="ICE" VerticalAlignment="Top" Width="60" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="78,37,0,0" Name="textBox4" Text="CL" VerticalAlignment="Top" Width="50" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="78,66,0,0" Name="textBox5" Text="WS" VerticalAlignment="Top" Width="50" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="78,95,0,0" Name="textBox6" Text="B" VerticalAlignment="Top" Width="50" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="134,37,0,0" Name="textBox7" Text="10" VerticalAlignment="Top" Width="81" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="134,95,0,0" Name="textBox8" Text="2" VerticalAlignment="Top" Width="81" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="134,66,0,0" Name="textBox9" Text="5" VerticalAlignment="Top" Width="81" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="221,37,0,0" Name="textBox10" Text="3" VerticalAlignment="Top" Width="32" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="221,95,0,0" Name="textBox13" Text="1" VerticalAlignment="Top" Width="32" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="221,66,0,0" Name="textBox14" Text="2" VerticalAlignment="Top" Width="32" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="360,38,0,0" Name="textBox18" Text="25" VerticalAlignment="Top" Width="64" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="360,95,0,0" Name="textBox11" Text="25" VerticalAlignment="Top" Width="64" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="360,66,0,0" Name="textBox12" Text="25" VerticalAlignment="Top" Width="64" />
+        <TextBox Height="23" HorizontalAlignment="Right" Margin="0,38,218,0" Name="textBox19" Text="3*100-5*25" VerticalAlignment="Top" Width="80" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="430,66,0,0" Name="textBox20" Text="2*100-5*25" VerticalAlignment="Top" Width="80" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="430,95,0,0" Name="textBox21" Text="1*100-2*25" VerticalAlignment="Top" Width="80" />
+        <Label Content="Tick Size" Height="28" HorizontalAlignment="Left" Margin="259,12,0,0" Name="label11" VerticalAlignment="Top" />
+        <TextBox Height="23" HorizontalAlignment="Right" Margin="0,37,414,0" Name="textBox22" Text="100" VerticalAlignment="Top" Width="55" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="259,66,0,0" Name="textBox23" Text="100" VerticalAlignment="Top" Width="55" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="259,95,0,0" Name="textBox24" Text="100" VerticalAlignment="Top" Width="55" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="516,37,0,0" Name="textBox25" VerticalAlignment="Top" Width="78" Text="10" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="516,66,0,0" Name="textBox26" VerticalAlignment="Top" Width="78" Text="3" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="516,95,0,0" Name="textBox27" VerticalAlignment="Top" Width="78" Text="2" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="600,37,0,0" Name="textBox28" Text="10*175" VerticalAlignment="Top" Width="55" />
+        <Button Content="Buy" Height="23" HorizontalAlignment="Left" Margin="661,66,0,0" Name="button2" VerticalAlignment="Top" Width="38" />
+        <Button Content="Buy" Height="23" HorizontalAlignment="Left" Margin="661,95,0,0" Name="button3" VerticalAlignment="Top" Width="38" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="600,67,0,0" Name="textBox29" Text="3*75" VerticalAlignment="Top" Width="55" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="600,95,0,0" Name="textBox30" Text="2*50" VerticalAlignment="Top" Width="55" />
+        <Label Content="Should be able to sort by any column" Height="28" HorizontalAlignment="Left" Margin="142,158,0,0" Name="label12" VerticalAlignment="Top" />
+        <Label Content="Buy button will generate a FIX order" Height="28" HorizontalAlignment="Left" Margin="142,192,0,0" Name="label13" VerticalAlignment="Top" />
+        <Label Content="Legs button will open a new window" Height="28" HorizontalAlignment="Left" Margin="438,192,0,0" Name="label14" VerticalAlignment="Top" />
+        <Label Content="Buy Quantity should be editable, nothing else" Height="28" HorizontalAlignment="Left" Margin="438,158,0,0" Name="label15" VerticalAlignment="Top" />
+        <Button Content="5" Height="23" HorizontalAlignment="Left" Margin="316,38,0,0" Name="button4" VerticalAlignment="Top" Width="38" />
+        <Button Content="5" Height="23" HorizontalAlignment="Left" Margin="316,67,0,0" Name="button5" VerticalAlignment="Top" Width="38" />
+        <Button Content="2" Height="23" HorizontalAlignment="Left" Margin="316,95,0,0" Name="button6" VerticalAlignment="Top" Width="38" />
+        <Label Content="Should be a vertical scoll bar" Height="28" HorizontalAlignment="Left" Margin="142,221,0,0" Name="label16" VerticalAlignment="Top" />
+    </Grid-->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <ToolBar Height="26" Name="toolBar1" >
+            <Button Name="btnMode" Content="Show Only Profitable" Click="btnMode_Click" IsEnabled="true"></Button>
+            <Button Name="btnRunAlg" Content="Run Algorithm" IsEnabled="False"></Button>
+        </ToolBar>
+        <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" Grid.Row="1">
+            <my:PureArbitrageGrid x:Name="pureArbitrageGrid" Margin="5" />
+        </ScrollViewer>
+    </Grid>
+</Windows:BaseUpdatableWindow>

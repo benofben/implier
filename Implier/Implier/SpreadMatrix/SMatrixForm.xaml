@@ -1,0 +1,19 @@
+﻿<Windows:BaseUpdatableWindow x:Class="Implier.SMatrixForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Spread Matrix" Height="400" Width="600" xmlns:my="clr-namespace:Implier" xmlns:CommonControls="clr-namespace:Implier.CommonControls" xmlns:Windows="clr-namespace:Implier.CommonControls.Windows" Loaded="BaseUpdatableWindow_Loaded">
+    <Grid>
+        <!--Grid.RowDefinitions>
+            <RowDefinition Height="26"/>
+            <RowDefinition />
+            <RowDefinition Height="23" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions-->
+        
+        <!--ToolBar Name="toolBar1"/-->
+        <my:SMatrix x:Name="sMatrix1" />
+        <!--StatusBar Name="statusBar1" Grid.Row="2" /-->
+    </Grid>
+</Windows:BaseUpdatableWindow>

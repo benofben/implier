@@ -1,0 +1,49 @@
+﻿<UserControl x:Class="Implier.PureArbitrage.PureArbitrageRow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="700" Width="Auto" Height="Auto" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded">
+    <UserControl.Resources>
+            <Thickness x:Key="cellMargin" Left="2" Top="6" Right="2" Bottom="2"/>
+    </UserControl.Resources>
+    
+    <Grid Name="grid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        
+        <TextBox Height="23" Name="txtExchange" Text="CME"  Width="60" Margin="{StaticResource cellMargin}" IsEnabled="False" />
+        <TextBox Height="23" Name="txtSymbol" Text="CL" Width="50" Grid.Column="1" Margin="{StaticResource cellMargin}" IsEnabled="False" />
+        <TextBox Height="23" Name="txtMaxQuantity" Text="10" Width="81" Grid.Column="2" Margin="{StaticResource cellMargin}" IsEnabled="False" />
+        <!--TextBox Height="23" Name="txtTicks" Text="3" Width="32" Grid.Column="3" Margin="{StaticResource cellMargin}" IsReadOnly="True" />
+        <TextBox Height="23" Name="txtTickSize" Text="100" Width="55" Grid.Column="4" Margin="{StaticResource cellMargin}" IsReadOnly="True" /-->
+        <TextBox Height="23" Name="txtPrice" Text="300" Width="80" Grid.Column="3" Margin="{StaticResource cellMargin}" IsEnabled="False" />
+
+        <Button Content="5" Height="23" Name="btnLegs" Width="38" Grid.Column="5" Margin="{DynamicResource cellMargin}" />
+
+        <TextBox Height="23" Name="txtCostPerLeg" Text="25" Width="64" Grid.Column="6" Margin="{DynamicResource cellMargin}" IsEnabled="False" />
+        <TextBox Height="23" Name="txtProfitPerTrade" Text="3*100-5*25" Width="80" Grid.Column="7" Margin="{DynamicResource cellMargin}" IsEnabled="False" />
+        <TextBox Height="23" Name="txtBuyQuantity" Text="10" Width="78" Grid.Column="8" Margin="{DynamicResource cellMargin}"  />
+        <TextBox Height="23" Name="txtTotal" Text="10*175" Width="55" Grid.Column="9" Margin="{DynamicResource cellMargin}" IsEnabled="False" />
+
+        <Button Content=" Buy " Height="23" Name="btnBuy" Width="Auto" Grid.Column="10" Margin="{DynamicResource cellMargin}" Click="btnBuy_Click" />
+        <Button Content=" Result " Height="23" Name="btnRes" Width="Auto" Grid.Column="10" Margin="{DynamicResource cellMargin}" Click="btnRes_Click" Visibility="Hidden" />
+
+        <Button Name="btnRemove" Height="23" Grid.Column="11" Margin="{DynamicResource cellMargin}" Visibility="Hidden" Click="btnRemove_Click">
+            <Image Source="/Implier;component/Images/IconRemove.png" Width="16" Height="16" />
+        </Button>
+    </Grid>
+</UserControl>

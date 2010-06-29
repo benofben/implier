@@ -1,0 +1,76 @@
+﻿<UserControl x:Class="Implier.SMatrixCell"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="60" d:DesignWidth="100" BorderBrush="Black" BorderThickness="0,0,1,1" Background="DarkGray">
+
+    <UserControl.Resources>               
+        
+        <Style TargetType="{x:Type Label}">
+            <Setter Property="FontFamily" Value="Arial" />
+            <Setter Property="FontSize" Value="8pt" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+        </Style>
+
+        <Style x:Key="lblStyleAskSpread" TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
+            <Setter Property="Label.Foreground" Value="Black"/>
+        </Style>
+        
+        <Style x:Key="lblStyleBidSpread" TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
+            <Setter Property="Label.Foreground" Value="White"/>
+        </Style>
+
+        <Style x:Key="lblStyleAsk" TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
+            <Setter Property="Label.Foreground" Value="Red"/>
+        </Style>
+
+        <Style x:Key="lblStyleBid" TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
+            <Setter Property="Label.Foreground" Value="Blue"/>
+        </Style>
+
+        <Style TargetType="{x:Type Rectangle}">
+            <Setter Property="MinWidth" Value="60" />
+        </Style>
+
+        <Style x:Key="StyleAsk" TargetType="Rectangle" BasedOn="{StaticResource {x:Type Rectangle}}">
+            <Setter Property="Rectangle.Fill" Value="Red"/>
+        </Style>
+
+        <Style x:Key="StyleBid" TargetType="Rectangle" BasedOn="{StaticResource {x:Type Rectangle}}">
+            <Setter Property="Rectangle.Fill" Value="Blue"/>
+        </Style>
+
+        <Style x:Key="StyleEmpty" TargetType="Rectangle" BasedOn="{StaticResource {x:Type Rectangle}}">
+            <Setter Property="Rectangle.Fill" Value="GhostWhite"/>
+        </Style>
+
+    </UserControl.Resources>    
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="1" />
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition  />
+            <RowDefinition Height="1" />
+            <RowDefinition  />
+        </Grid.RowDefinitions>
+
+        <!--Rectangle Name="rectTitle" Fill="#FF3B7EB8" Margin="1" Grid.ColumnSpan="2"/-->
+        <Rectangle Name="rectAskPx" Style="{StaticResource StyleAsk}" />
+        <Rectangle Name="rectAskCount" Style="{StaticResource StyleAsk}" Grid.Column="2"/>
+        <Rectangle Name="rectBidPx" Style="{StaticResource StyleBid}" Grid.Row="2"/>
+        <Rectangle Name="rectBidCount" Style="{StaticResource StyleBid}" Grid.Row="2" Grid.Column="2"/>
+
+        <!--Label Content="YearMonth" HorizontalAlignment="Center" Name="lblYearMonth" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="9" /-->
+        <Label Content="A Px" Style="{StaticResource lblStyleAskSpread}" Name="lblAskPx" />
+        <Label Content="A Count" Style="{StaticResource lblStyleAskSpread}" Name="lblAskCount" Grid.Column="2" />
+        <Label Content="B Px" Style="{StaticResource lblStyleBidSpread}" Name="lblBidPx" Grid.Row="2"  />
+        <Label Content="B Count" Style="{StaticResource lblStyleBidSpread}" Name="lblBidCount" Grid.Row="2" Grid.Column="2" />
+    </Grid>    
+</UserControl>

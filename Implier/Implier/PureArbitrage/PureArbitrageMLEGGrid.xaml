@@ -1,0 +1,50 @@
+﻿<Window x:Class="Implier.PureArbitrage.PureArbitrageMLEGGrid"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Legs" WindowStyle="ToolWindow"
+        SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen" x:ClassModifier="internal">
+    <Grid>
+        <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding}" Name="dataGrid">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Sides" Binding="{Binding Mode=OneWay, Path=Dates}" />
+                <DataGridTextColumn Header="Security Type" Binding="{Binding Mode=OneWay, Path=SecurityType}"  />                             
+
+                <DataGridTemplateColumn Header="Bid Qty" >                    
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Mode=OneWay, Path=BidQuantity}" Foreground="{Binding Mode=OneWay, Path=BidCellForeground}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Ask Qty" >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Mode=OneWay, Path=AskQuantity}" Foreground="{Binding Mode=OneWay, Path=AskCellForeground}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Bid Price" >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Mode=OneWay, Path=BidPrice}" Foreground="{Binding Mode=OneWay, Path=BidCellForeground}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Ask Price" >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Mode=OneWay, Path=AskPrice}" Foreground="{Binding Mode=OneWay, Path=AskCellForeground}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="Quantity" Binding="{Binding Mode=OneWay, Path=Quantity}" />
+                <DataGridTextColumn Header="Side" Binding="{Binding Mode=OneWay, Path=SideText}" />
+                <DataGridTextColumn Header="Order Status" Binding="{Binding Mode=OneWay, Path=OrderStatusText}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>
