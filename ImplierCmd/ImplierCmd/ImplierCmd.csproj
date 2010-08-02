@@ -53,6 +53,7 @@
     <Compile Include="Algorithm\Security.cs" />
     <Compile Include="Algorithm\Spread.cs" />
     <Compile Include="Algorithm\SpreadMatrix.cs" />
+    <Compile Include="Algorithm\Trade.cs" />
     <Compile Include="FIXApplication\FIXApplication.cs" />
     <Compile Include="FIXApplication\MessageCracker.cs" />
     <Compile Include="Program.cs" />
