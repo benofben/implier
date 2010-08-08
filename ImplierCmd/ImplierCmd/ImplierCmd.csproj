@@ -49,9 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Algorithm\Outright.cs" />
     <Compile Include="Algorithm\Security.cs" />
-    <Compile Include="Algorithm\Spread.cs" />
     <Compile Include="Algorithm\SpreadMatrix.cs" />
     <Compile Include="Algorithm\Trade.cs" />
     <Compile Include="FIXApplication\FIXApplication.cs" />

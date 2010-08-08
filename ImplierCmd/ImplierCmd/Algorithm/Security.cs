@@ -5,25 +5,44 @@ using System.Text;
 
 namespace ImplierCmd.Algorithm
 {
-    abstract class Security
+    class Security
     {
         //FIX Tag 48, SecurityID
         public string securityID;
 
         //FIX Tag 271, MDEntryPx
-        public double bidPrice;
-        public double askPrice;
+        public double price;
 
         //FIX Tag 271, MDEntrySize
-        public double bidSize;
-        public double askSize;
+        public double size;
+        
+        // + if buy, - if sell
+        public string side;
 
-        public void Update(double bidPrice, double bidSize, double askPrice, double askSize)
+        //concat({+/-}, maturityMonthYear)
+        public List<string> legs = new List<string>();
+
+        // Constructor for outright
+        public Security(string securityID, string leg, string side)
         {
-            this.bidPrice = bidPrice;
-            this.bidSize = bidSize;
-            this.askPrice = askPrice;
-            this.askSize = askSize;
+            this.securityID = securityID;
+            this.legs.Add(leg);
+            this.side = side;
+        }
+
+        // Constructor for spread
+        public Security(string securityID, string leg1, string leg2, string side)
+        {
+            this.securityID = securityID;
+            this.legs.Add(leg1);
+            this.legs.Add(leg2);
+            this.side = side;
+        }
+
+        public void Update(double price, double size)
+        {
+            this.price = price;
+            this.size = size;
         }
     }
 }

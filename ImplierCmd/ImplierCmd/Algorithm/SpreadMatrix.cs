@@ -7,120 +7,112 @@ namespace ImplierCmd.Algorithm
 {
     class SpreadMatrix
     {
-        // every security that we have a security definition for
-        Dictionary<string, Outright> allOutrights;
-        Dictionary<string, Spread> allSpreads; 
-        
-        // active - every security with a non-zero bidSize or askSize
-
-        // activeOutright[maturityMonthYear]=outright
-        Dictionary<string, Outright> activeOutrights;
-
-        /* In the case of spreads each security has two entries in the dictionary, 
-         * one for the long and one for the short leg.
-         */
-        // activeSpreads[maturityMonthYear][securityID]=spread
-        Dictionary<string, Dictionary<string, Spread>> activeSpreads;
-
-        public SpreadMatrix()
-        {
-            allOutrights = new Dictionary<string, Outright>();
-            allSpreads = new Dictionary<string, Spread>(); 
-            
-            activeOutrights = new Dictionary<string, Outright>();
-            activeSpreads = new Dictionary<string, Dictionary<string, Spread>>();
-        }
+        //[concat({+/-}, securityID)]
+        Dictionary<string, Security> allOutrights = new Dictionary<string, Security>();
+        Dictionary<string, Security> allSpreads = new Dictionary<string, Security>();
+        Dictionary<string, Security> activeOutrights = new Dictionary<string, Security>();
+        Dictionary<string, Security> activeSpreads = new Dictionary<string, Security>();
 
         public void CreateOutright(string securityID, string maturityMonthYear)
         {
-            Outright outright = new Outright(securityID, maturityMonthYear);
-            allOutrights.Add(securityID, outright);
+            allOutrights.Add("+" + securityID, new Security(securityID, "+" + maturityMonthYear, "+"));
+            allOutrights.Add("-" + securityID, new Security(securityID, "-" + maturityMonthYear, "-"));
         }
 
         public void CreateSpread(string securityID, string longUnderlyingMaturityMonthYear, string shortUnderlyingMaturityMonthYear)
         {
-            Spread spread = new Spread(securityID, longUnderlyingMaturityMonthYear, shortUnderlyingMaturityMonthYear);
-            allSpreads.Add(securityID, spread);
+            allSpreads.Add("+" + securityID, new Security(
+                securityID,
+                "+" + longUnderlyingMaturityMonthYear,
+                "-" + shortUnderlyingMaturityMonthYear, 
+                "+"));
+
+            allSpreads.Add("-" + securityID, new Security(
+                securityID,
+                "-" + longUnderlyingMaturityMonthYear,
+                "+" + shortUnderlyingMaturityMonthYear,
+                "-"));
         }
 
         public void Update(string securityID, double bidPrice, double bidSize, double askPrice, double askSize)
         {
-            if(allOutrights.ContainsKey(securityID))
+            if (allOutrights.ContainsKey("-" + securityID))
                 UpdateOutright(securityID, bidPrice, bidSize, askPrice, askSize);
-            else if(allSpreads.ContainsKey(securityID))
+            else if (allSpreads.ContainsKey("-" + securityID))
                 UpdateSpread(securityID, bidPrice, bidSize, askPrice, askSize);
-
-            CheckForOpportunities();
+            
+            CheckForTrades();
         }
 
         public void UpdateOutright(string securityID, double bidPrice, double bidSize, double askPrice, double askSize)
         {
-            if (bidPrice == 0 && bidSize == 0 && askPrice == 0 && askSize == 0)
-                activeOutrights.Remove(allOutrights[securityID].maturityMonthYear);
-            else if(!activeOutrights.ContainsKey(allOutrights[securityID].maturityMonthYear))
-                activeOutrights.Add(allOutrights[securityID].maturityMonthYear, allOutrights[securityID]);
+            if (bidSize > 0)
+            {
+                if (!activeOutrights.ContainsKey("-" + securityID))
+                    activeOutrights.Add("-" + securityID, allOutrights["-" + securityID]);
+            }
+            else
+            {
+                if (activeOutrights.ContainsKey("-" + securityID))
+                    activeOutrights.Remove("-" + securityID);
+            }
 
-            allOutrights[securityID].Update(bidPrice, bidSize, askPrice, askSize);
+            if (askSize > 0)
+            {
+                if (!activeOutrights.ContainsKey("+" + securityID))
+                    activeOutrights.Add("+" + securityID, allOutrights["+" + securityID]);
+            }
+            else
+            {
+                if (activeOutrights.ContainsKey("+" + securityID))
+                    activeOutrights.Remove("+" + securityID);
+            }
+             
+            UpdateOutright("-" + securityID, bidPrice, bidSize);
+            UpdateOutright("+" + securityID, askPrice, askSize);
+        }
+
+        private void UpdateOutright(string key, double price, double size)
+        {
+            allOutrights[key].price = price;
+            allOutrights[key].size = size;
         }
 
         public void UpdateSpread(string securityID, double bidPrice, double bidSize, double askPrice, double askSize)
         {
-            if (bidPrice == 0 && bidSize == 0 && askPrice == 0 && askSize == 0)
+            if (bidSize > 0)
             {
-                // remove the long entry for securityID
-                if (activeSpreads.ContainsKey(allSpreads[securityID].longUnderlyingMaturityMonthYear) &&
-                    activeSpreads[allSpreads[securityID].longUnderlyingMaturityMonthYear].ContainsKey(securityID))
-                {
-                    activeSpreads[allSpreads[securityID].longUnderlyingMaturityMonthYear].Remove(securityID);
-                }
-
-                // if allSpread[longUnderlyingMaturityMonthYear] is empty, remove it
-                if (activeSpreads.ContainsKey(allSpreads[securityID].longUnderlyingMaturityMonthYear) &&
-                    activeSpreads[allSpreads[securityID].longUnderlyingMaturityMonthYear].Count == 0)
-                {
-                    activeSpreads.Remove(allSpreads[securityID].longUnderlyingMaturityMonthYear);
-                }
-
-                // remove the short entry for securityID
-                if (activeSpreads.ContainsKey(allSpreads[securityID].shortUnderlyingMaturityMonthYear) &&
-                    activeSpreads[allSpreads[securityID].shortUnderlyingMaturityMonthYear].ContainsKey(securityID))
-                {
-                    activeSpreads[allSpreads[securityID].shortUnderlyingMaturityMonthYear].Remove(securityID);
-                }
-
-                // if allSpread[shortUnderlyingMaturityMonthYear] is empty, remove it
-                if (activeSpreads.ContainsKey(allSpreads[securityID].shortUnderlyingMaturityMonthYear) &&
-                    activeSpreads[allSpreads[securityID].shortUnderlyingMaturityMonthYear].Count == 0)
-                {
-                    activeSpreads.Remove(allSpreads[securityID].shortUnderlyingMaturityMonthYear);
-                }
+                if (!activeSpreads.ContainsKey("-" + securityID))
+                    activeSpreads.Add("-" + securityID, allSpreads["-" + securityID]);
             }
             else
             {
-                // check if it's on the active list
-                // if not, add it
-
-                // make sure the longMaturityMonthYear key exists, if not add it
-                if(!activeSpreads.ContainsKey(allSpreads[securityID].longUnderlyingMaturityMonthYear))
-                    activeSpreads.Add(allSpreads[securityID].longUnderlyingMaturityMonthYear, new Dictionary<string, Spread>());
-
-                // make sure the longMaturityMonthYear key exists, if not add it
-                if(!activeSpreads.ContainsKey(allSpreads[securityID].shortUnderlyingMaturityMonthYear))
-                    activeSpreads.Add(allSpreads[securityID].shortUnderlyingMaturityMonthYear, new Dictionary<string, Spread>());
-
-                // make sure the securityID exists under long, if not add it
-                if(!activeSpreads[allSpreads[securityID].longUnderlyingMaturityMonthYear].ContainsKey(securityID))
-                    activeSpreads[allSpreads[securityID].longUnderlyingMaturityMonthYear].Add(securityID, allSpreads[securityID]);
-
-                // make sure the securityID exists under short, if not add it
-                if (!activeSpreads[allSpreads[securityID].shortUnderlyingMaturityMonthYear].ContainsKey(securityID))
-                    activeSpreads[allSpreads[securityID].shortUnderlyingMaturityMonthYear].Add(securityID, allSpreads[securityID]);
+                if (activeSpreads.ContainsKey("-" + securityID))
+                    activeSpreads.Remove("-" + securityID);
             }
 
-            allSpreads[securityID].Update(bidPrice, bidSize, askPrice, askSize);
+            if (askSize > 0)
+            {
+                if (!activeSpreads.ContainsKey("+" + securityID))
+                    activeSpreads.Add("+" + securityID, allSpreads["+" + securityID]);
+            }
+            else
+            {
+                if (activeSpreads.ContainsKey("+" + securityID))
+                    activeSpreads.Remove("+" + securityID);
+            }
+
+            UpdateSpread("-" + securityID, bidPrice, bidSize);
+            UpdateSpread("+" + securityID, askPrice, askSize);
         }
 
-        private void CheckForOpportunities()
+        private void UpdateSpread(string key, double price, double size)
+        {
+            allSpreads[key].price = price;
+            allSpreads[key].size = size;
+        }
+
+        private void CheckForTrades()
         {
             CheckForTradesStartingWithOutrights();
             CheckForTradesWithSpreadsOnly();
@@ -129,44 +121,33 @@ namespace ImplierCmd.Algorithm
         private void CheckForTradesStartingWithOutrights()
         {
             // Check for trades like Sep10, Sep10/Dec10, Dec10
-            foreach (KeyValuePair<string, Outright> pair in activeOutrights)
+
+            // for each active outright, start create a trade
+            foreach (KeyValuePair<string, Security> pair in activeOutrights)
             {
-                if (pair.Value.bidSize > 0)
-                {
-                    Trade trade = new Trade();
-                    trade.legs.Add(pair.Value);
-                    trade.side.Add(false);
-                    CheckForTradesStartingWithOutrights(trade);
-                }
-
-                if (pair.Value.askSize > 0)
-                {
-                    Trade trade = new Trade();
-                    trade.legs.Add(pair.Value);
-                    trade.side.Add(true);
-                    CheckForTradesStartingWithOutrights(trade);
-                }
+                Trade trade = new Trade(pair.Value);
+                CheckForTrades(trade);
             }
-        }
 
-        private void CheckForTradesStartingWithOutrights(Trade trade)
-        {
-            if (trade.IsHedged())
-                Console.WriteLine("Cost: " + trade.Cost());
-
-            string maturityMonthYear = trade.IsMissing();
-
-            Trade newTrade = new Trade(trade.legs, trade.side);
-            newTrade.legs.Add(activeOutrights[maturityMonthYear])
-
-            //first, create a trade that closes the graph.  eg if we have Sep10, Sep10/Dec10 then pick the outright Dec10
-            //if(trade
         }
 
         private void CheckForTradesWithSpreadsOnly()
         {
             // Check for trades like Sep10/Dec10, Dec10/Jan11, Jan11/Sep10
 
+        }
+
+        private void CheckForTrades(Trade trade)
+        {
+            if (trade.isHedged)
+            {
+                Console.WriteLine("Found a trade for " + trade.Cost());
+                return;
+            }
+
+            //first, try to hedge the trade if it started with an outright
+            if(trade.securities[0].legs.Count==1)
+            trade.missingSecurity;
         }
     }
 }
