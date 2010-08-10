@@ -176,7 +176,7 @@ namespace ImplierCmd.FIXApplication
                     bidPrice = group.getMDEntryPx().getValue();
                     bidSize = group.getMDEntrySize().getValue();
                 }
-                else if (group.getMDEntryType().getValue() == MDEntryType.BID)
+                if (group.getMDEntryType().getValue() == MDEntryType.OFFER)
                 {
                     askPrice = group.getMDEntryPx().getValue();
                     askSize = group.getMDEntrySize().getValue();

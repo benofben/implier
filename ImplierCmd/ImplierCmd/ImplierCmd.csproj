@@ -34,6 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FSharp.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="quickfix_net">
       <HintPath>..\quickfix_net.dll</HintPath>
     </Reference>
@@ -49,9 +50,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Algorithm\Security.cs" />
-    <Compile Include="Algorithm\SpreadMatrix.cs" />
-    <Compile Include="Algorithm\Trade.cs" />
     <Compile Include="FIXApplication\FIXApplication.cs" />
     <Compile Include="FIXApplication\MessageCracker.cs" />
     <Compile Include="Program.cs" />
@@ -71,7 +69,13 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ImplierAlgorithm\ImplierAlgorithm.fsproj">
+      <Project>{F2D0DC75-0D25-42AA-8C32-16B5E4BCC2A8}</Project>
+      <Name>ImplierAlgorithm</Name>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

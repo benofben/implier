@@ -3,22 +3,38 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImplierCmd", "ImplierCmd\ImplierCmd.csproj", "{C785557C-386B-4831-B8B5-ABF72CBAA97E}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ImplierAlgorithm", "ImplierAlgorithm\ImplierAlgorithm.fsproj", "{0BBD2A5B-7AA5-43A0-989B-B6EA7F897F0A}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ImplierAlgorithm", "ImplierAlgorithm\ImplierAlgorithm.fsproj", "{F2D0DC75-0D25-42AA-8C32-16B5E4BCC2A8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C785557C-386B-4831-B8B5-ABF72CBAA97E}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{C785557C-386B-4831-B8B5-ABF72CBAA97E}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{C785557C-386B-4831-B8B5-ABF72CBAA97E}.Debug|Mixed Platforms.Build.0 = Debug|x86
 		{C785557C-386B-4831-B8B5-ABF72CBAA97E}.Debug|x86.ActiveCfg = Debug|x86
 		{C785557C-386B-4831-B8B5-ABF72CBAA97E}.Debug|x86.Build.0 = Debug|x86
+		{C785557C-386B-4831-B8B5-ABF72CBAA97E}.Release|Any CPU.ActiveCfg = Release|x86
+		{C785557C-386B-4831-B8B5-ABF72CBAA97E}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{C785557C-386B-4831-B8B5-ABF72CBAA97E}.Release|Mixed Platforms.Build.0 = Release|x86
 		{C785557C-386B-4831-B8B5-ABF72CBAA97E}.Release|x86.ActiveCfg = Release|x86
 		{C785557C-386B-4831-B8B5-ABF72CBAA97E}.Release|x86.Build.0 = Release|x86
-		{0BBD2A5B-7AA5-43A0-989B-B6EA7F897F0A}.Debug|x86.ActiveCfg = Debug|x86
-		{0BBD2A5B-7AA5-43A0-989B-B6EA7F897F0A}.Debug|x86.Build.0 = Debug|x86
-		{0BBD2A5B-7AA5-43A0-989B-B6EA7F897F0A}.Release|x86.ActiveCfg = Release|x86
-		{0BBD2A5B-7AA5-43A0-989B-B6EA7F897F0A}.Release|x86.Build.0 = Release|x86
+		{F2D0DC75-0D25-42AA-8C32-16B5E4BCC2A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2D0DC75-0D25-42AA-8C32-16B5E4BCC2A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2D0DC75-0D25-42AA-8C32-16B5E4BCC2A8}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F2D0DC75-0D25-42AA-8C32-16B5E4BCC2A8}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F2D0DC75-0D25-42AA-8C32-16B5E4BCC2A8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F2D0DC75-0D25-42AA-8C32-16B5E4BCC2A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2D0DC75-0D25-42AA-8C32-16B5E4BCC2A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2D0DC75-0D25-42AA-8C32-16B5E4BCC2A8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F2D0DC75-0D25-42AA-8C32-16B5E4BCC2A8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F2D0DC75-0D25-42AA-8C32-16B5E4BCC2A8}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

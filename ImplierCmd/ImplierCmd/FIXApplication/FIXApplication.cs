@@ -5,7 +5,10 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using QuickFix;
-using ImplierCmd.Algorithm;
+
+using Microsoft.FSharp.Core;
+using Microsoft.FSharp.Collections;
+using ImplierAlgorithm.SpreadMatrix;
 
 namespace ImplierCmd.FIXApplication
 {

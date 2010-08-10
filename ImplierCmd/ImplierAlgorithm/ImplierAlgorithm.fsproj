@@ -2,18 +2,17 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{0bbd2a5b-7aa5-43a0-989b-b6ea7f897f0a}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{f2d0dc75-0d25-42aa-8c32-16b5e4bcc2a8}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <RootNamespace>ImplierAlgorithm</RootNamespace>
     <AssemblyName>ImplierAlgorithm</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <Name>ImplierAlgorithm</Name>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -21,17 +20,15 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
     <DocumentationFile>bin\Debug\ImplierAlgorithm.XML</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <Tailcalls>true</Tailcalls>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
     <DocumentationFile>bin\Release\ImplierAlgorithm.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
@@ -42,7 +39,10 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.fs" />
+    <Compile Include="DictionaryToList.fs" />
+    <Compile Include="Algorithm.fs" />
+    <Compile Include="SpreadMatrix.fs" />
+    <None Include="Script.fsx" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\FSharp\1.0\Microsoft.FSharp.Targets" Condition="!Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
