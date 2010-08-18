@@ -14,7 +14,7 @@ type SpreadMatrix() =
     member this.CreateSpread(securityID : string, longUnderlyingMaturityMonthYear: string, shortUnderlyingMaturityMonthYear : string) = 
         spreadDictionary.Add(securityID, (longUnderlyingMaturityMonthYear, shortUnderlyingMaturityMonthYear, 0.0, 0.0, 0.0, 0.0))
 
-    member x.Update(securityID : string, bidPrice : double, bidSize : double, askPrice : double, askSize : double) =
+    member this.Update(securityID : string, bidPrice : double, bidSize : double, askPrice : double, askSize : double) =
         let result, value = outrightDictionary.TryGetValue(securityID)
         if result then 
             let maturityMonthYear, _, _, _, _ = value

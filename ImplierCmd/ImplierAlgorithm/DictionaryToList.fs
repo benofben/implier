@@ -3,13 +3,21 @@
 open System
 open System.Collections.Generic
 
+type SecurityInfo = { securityID: string; side: int; price: double; size: double }
+type OutrightInfo = { maturityMonthYear: string }
+type SpreadInfo = { longUnderlyingMaturityMonthYear: string; shortUnderlyingMaturityMonthYear: string }
+
+type Security = 
+    | Outright of SecurityInfo * OutrightInfo
+    | Spread of SecurityInfo * SpreadInfo
+
 let rec addToOutrights(list, outrightMapEnumerator : IEnumerator<string * string * double * double * double * double >) = 
     if outrightMapEnumerator.MoveNext() then 
         let newList = 
             match outrightMapEnumerator.Current with
-            | (securityID, maturityMonthYear, bidPrice, bidSize, askPrice, askSize) when bidSize<>0.0 && askSize<>0.0 -> (securityID, maturityMonthYear, "Sell", bidPrice, bidSize) :: (securityID, maturityMonthYear, "Buy", askPrice, askSize) :: list
-            | (securityID, maturityMonthYear, bidPrice, bidSize, _, _) when bidSize<>0.0 -> (securityID, maturityMonthYear, "Sell", bidPrice, bidSize) :: list
-            | (securityID, maturityMonthYear, _, _, askPrice, askSize) when askSize<>0.0 -> (securityID, maturityMonthYear, "Buy", askPrice, askSize) :: list
+            | (securityID, maturityMonthYear, bidPrice, bidSize, askPrice, askSize) when bidSize<>0.0 && askSize<>0.0 -> (Outright({securityID = securityID; side = -1; price = bidPrice; size = bidSize}, {maturityMonthYear = maturityMonthYear})) :: (Outright({securityID = securityID; side = 1; price = askPrice; size = askSize}, {maturityMonthYear = maturityMonthYear})) :: list
+            | (securityID, maturityMonthYear, bidPrice, bidSize, _, _) when bidSize<>0.0 -> (Outright({securityID = securityID; side = -1; price = bidPrice; size = bidSize}, {maturityMonthYear = maturityMonthYear})) :: list
+            | (securityID, maturityMonthYear, _, _, askPrice, askSize) when askSize<>0.0 -> (Outright({securityID = securityID; side = 1; price = askPrice; size = askSize}, {maturityMonthYear = maturityMonthYear})) :: list
             | _ -> list
         addToOutrights(newList, outrightMapEnumerator)
     else
@@ -19,9 +27,9 @@ let rec addToSpreads(list, spreadMapEnumerator : IEnumerator<string * string * s
     if spreadMapEnumerator.MoveNext() then 
         let newList = 
             match spreadMapEnumerator.Current with
-            | (securityID, longUnderlyingMaturityMonthYear, shortUnderlyingMaturityMonthYear, bidPrice, bidSize, askPrice, askSize) when bidSize<>0.0 && askSize<>0.0 -> (securityID, longUnderlyingMaturityMonthYear, shortUnderlyingMaturityMonthYear, "Sell", bidPrice, bidSize) :: (securityID, longUnderlyingMaturityMonthYear, shortUnderlyingMaturityMonthYear, "Buy", askPrice, askSize) :: list
-            | (securityID, longUnderlyingMaturityMonthYear, shortUnderlyingMaturityMonthYear, bidPrice, bidSize, _, _) when bidSize<>0.0 -> (securityID, longUnderlyingMaturityMonthYear, shortUnderlyingMaturityMonthYear, "Sell", bidPrice, bidSize) :: list
-            | (securityID, longUnderlyingMaturityMonthYear, shortUnderlyingMaturityMonthYear, _, _, askPrice, askSize) when askSize<>0.0 -> (securityID, longUnderlyingMaturityMonthYear, shortUnderlyingMaturityMonthYear, "Buy", askPrice, askSize) :: list
+            | (securityID, longUnderlyingMaturityMonthYear, shortUnderlyingMaturityMonthYear, bidPrice, bidSize, askPrice, askSize) when bidSize<>0.0 && askSize<>0.0 -> (Spread({securityID = securityID; side = -1; price = bidPrice; size = bidSize}, {longUnderlyingMaturityMonthYear = longUnderlyingMaturityMonthYear; shortUnderlyingMaturityMonthYear = shortUnderlyingMaturityMonthYear})) :: (Spread({securityID = securityID; side = 1; price = askPrice; size = askSize}, {longUnderlyingMaturityMonthYear = longUnderlyingMaturityMonthYear; shortUnderlyingMaturityMonthYear = shortUnderlyingMaturityMonthYear})) :: list
+            | (securityID, longUnderlyingMaturityMonthYear, shortUnderlyingMaturityMonthYear, bidPrice, bidSize, _, _) when bidSize<>0.0 -> (Spread({securityID = securityID; side = -1; price = bidPrice; size = bidSize}, {longUnderlyingMaturityMonthYear = longUnderlyingMaturityMonthYear; shortUnderlyingMaturityMonthYear = shortUnderlyingMaturityMonthYear})) :: list
+            | (securityID, longUnderlyingMaturityMonthYear, shortUnderlyingMaturityMonthYear, _, _, askPrice, askSize) when askSize<>0.0 -> (Spread({securityID = securityID; side = 1; price = askPrice; size = askSize}, {longUnderlyingMaturityMonthYear = longUnderlyingMaturityMonthYear; shortUnderlyingMaturityMonthYear = shortUnderlyingMaturityMonthYear})) :: list
             | _ -> list
         addToSpreads(newList, spreadMapEnumerator)
     else
