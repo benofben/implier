@@ -40,6 +40,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DictionaryToList.fs" />
+    <Compile Include="AlgorithmHelpers.fs" />
+    <Compile Include="OutrightTrades.fs" />
+    <Compile Include="SpreadTrades.fs" />
     <Compile Include="Algorithm.fs" />
     <Compile Include="SpreadMatrix.fs" />
     <None Include="Script.fsx" />

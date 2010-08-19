@@ -30,7 +30,7 @@ namespace ImplierCmd.FIXApplication
             Console.WriteLine("onLogon " + sessionID);
 
             String exchange = "CME";
-            String symbol = "6E";
+            String symbol = "CL";
             RequestSymbols(exchange, symbol, sessionID);
         }
 
