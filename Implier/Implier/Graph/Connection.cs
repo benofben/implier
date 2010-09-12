@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Implier.Graph
 {
-    public class SideConnection : DisposableBaseObject
+    internal class SideConnection : DisposableBaseObject
     {
         #region Private
 

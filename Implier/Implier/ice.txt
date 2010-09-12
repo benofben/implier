@@ -1,0 +1,13 @@
+ICE_IPE/Cocoa
+ICE_IPE/Coffee C
+ICE_IPE/Cotton No 2
+ICE_IPE/FCOJ A
+ICE_IPE/ICE Heating Oil
+ICE_IPE/ICE WTI
+ICE_IPE/IPE e-Brent SMM
+ICE_IPE/IPE e-Gas Oil
+ICE_IPE/Sugar No 11
+ICE_IPE/Sugar No 16
+ICE_IPE/US Dollar Index
+ICE_IPE/IPE Nat Gas
+

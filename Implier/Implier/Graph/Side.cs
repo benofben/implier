@@ -6,7 +6,7 @@ using System.Text;
 namespace Implier.Graph
 {
 
-    public class ContractSide : DisposableBaseObject
+    internal class ContractSide : DisposableBaseObject
     {
         #region Private
 

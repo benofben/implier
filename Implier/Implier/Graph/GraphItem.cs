@@ -5,7 +5,23 @@ using System.Text;
 
 namespace Implier.Graph
 {
-    public abstract class DisposableBaseObject : IDisposable
+    internal interface IUpdatableObject
+    {
+        ISupportableObject MessageProvider { get; set; }
+        void Changed(DisposableBaseObject obj);
+        void ForceTotalUpdate();
+    }
+
+    internal interface ISupportableObject
+    {
+        IEnumerable<IUpdatableObject> UpdatableObjects { get; }
+        void DNURegisterUpdatableObject(IUpdatableObject obj);
+        void DNUUnregisterUpdatableObject(IUpdatableObject obj);
+        IUpdatableObject SearchForUpdatableObject(Func<IUpdatableObject, bool> func);
+        void RaizeChanged(DisposableBaseObject changed);
+    }
+     
+    internal abstract class DisposableBaseObject : IDisposable
     {
         #region Fields
         private object lockObject = new object();

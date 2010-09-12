@@ -19,7 +19,7 @@ namespace Implier.SecurityDefinitionList
     /// <summary>
     /// Interaction logic for SecurityDefinitionGrid.xaml
     /// </summary>
-    public partial class SecurityDefinitionGrid : UserControl
+    internal partial class SecurityDefinitionGrid : UserControl
     {
         #region Methods
         public SecurityDefinitionGrid()
@@ -31,8 +31,9 @@ namespace Implier.SecurityDefinitionList
         {
             SecurityDefinitionRow row = new SecurityDefinitionRow();
 
-            row.label1.Content = spreadMatrixData.Exchange + "/" + spreadMatrixData.Symbol;
-            row.SpreadMatrixData = spreadMatrixData;
+            row.label.Text = spreadMatrixData.Exchange + "/" + spreadMatrixData.Symbol;
+            row.Exchange = spreadMatrixData.Exchange;
+            row.Symbol = spreadMatrixData.Symbol;
 
             return row;
         }
@@ -49,8 +50,7 @@ namespace Implier.SecurityDefinitionList
             row.SpreadMatrixShowPressed -= onSpreadMatrixShowPressed;
             row.RemovePressed -= onRemovePressed;
 
-            FixApplication.SpreadMatrixCollection.Remove(row.SpreadMatrixData.Exchange, row.SpreadMatrixData.Symbol);
-            row.Dispose();
+            FixApplication.Current.SpreadMatrixCollection.Remove(row.Exchange, row.Symbol);
 
             stackPanel.Children.Remove(row);
         }
@@ -72,11 +72,13 @@ namespace Implier.SecurityDefinitionList
         private void onSpreadMatrixShowPressed(object sender, RoutedEventArgs e)
         {
             SecurityDefinitionRow row = ((SecurityDefinitionRow)sender);
+            
+            SpreadMatrixData sm = FixApplication.Current.SpreadMatrixCollection.Get(row.Exchange, row.Symbol);
 
-            if (row.SpreadMatrixData != null)
+            if (sm != null)
             {
                 SMatrixForm spreadMatrixForm =
-                    (SMatrixForm)row.SpreadMatrixData.SearchForWindow(wnd => wnd is SMatrixForm);
+                    (SMatrixForm)sm.SearchForUpdatableObject(wnd => wnd is SMatrixForm);
 
                 if (spreadMatrixForm != null)
                 {
@@ -85,10 +87,9 @@ namespace Implier.SecurityDefinitionList
                 }
             }
 
-            SMatrixForm spreadMatrixForm2 = new SMatrixForm { MessageProvider = row.SpreadMatrixData };
+            SMatrixForm spreadMatrixForm2 = new SMatrixForm { MessageProvider = sm };
 
-            spreadMatrixForm2.Show();            
-
+            spreadMatrixForm2.Show();
         }
 
         private void onRemovePressed(object sender, RoutedEventArgs e)
@@ -96,10 +97,6 @@ namespace Implier.SecurityDefinitionList
             SecurityDefinitionRow row = ((SecurityDefinitionRow)sender);
             RemoveRow(row);
         }
-        #endregion
-
-        #region Properties
-        internal FixApplication FixApplication { get; set; }
         #endregion
     }
 }

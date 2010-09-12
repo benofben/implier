@@ -13,33 +13,38 @@ namespace Implier.CommonControls.Windows
     internal delegate void UpdateWindowHandler(object sender, DisposableBaseObject obj);
     internal delegate void InternalUpdateHandler(BaseUpdatableWindow wnd);
 
-    public abstract partial class BaseUpdatableWindow : Window
+    internal abstract class BaseUpdatableWindow : Window, IUpdatableObject
     {
         #region Fields
         Timer delay;
         public const int Tick = 30;
-        private WindowSupportableObject messageProvider = null;
-        readonly List<DisposableBaseObject> changedList = new List<DisposableBaseObject>();
+        ISupportableObject messageProvider = null;
+        List<DisposableBaseObject> changedList = new List<DisposableBaseObject>();
 
         private readonly object lockObject = new object();
+        private readonly object winLockObject = new object();
         
         #endregion
 
         #region Properties
-
-        internal WindowSupportableObject MessageProvider
+        
+        public ISupportableObject MessageProvider
         {
             get { return messageProvider; }
             set
             {
                 if (messageProvider!=null)
-                    messageProvider.DNUUnregisterWindow(this);
+                    messageProvider.DNUUnregisterUpdatableObject(this);
+
                 messageProvider = value;
+
                 if (messageProvider != null)
                 {
-                    messageProvider.DNURegisterWindow(this);
+                    messageProvider.DNURegisterUpdatableObject(this);
                     ForceTotalUpdate();
                 }
+                else
+                    Close();
             }
         }
 
@@ -47,23 +52,31 @@ namespace Implier.CommonControls.Windows
 
         #region Methods
 
-        internal abstract void ForceTotalUpdate();
+        public abstract void ForceTotalUpdate();
 
-        internal void Changed(DisposableBaseObject obj)
+        public void Changed(DisposableBaseObject obj)
         {
-            Dispatcher.BeginInvoke(DispatcherPriority.Background, setChanged, this, obj);
+            //Dispatcher.BeginInvoke(DispatcherPriority.Background, setChanged, this, obj);
+            lock (lockObject)
+            {
+                changedList.Add(obj);
+            }
         }
 
         private readonly InternalUpdateHandler update = delegate(BaseUpdatableWindow buw)
         {
+            List<DisposableBaseObject> copy = null;
             lock (buw.lockObject)
             {
-                if (buw.delay != null)//window could be disposed in another thread
+                copy = buw.changedList;
+                buw.changedList = new List<DisposableBaseObject>();
+            }
+            lock (buw.winLockObject)
+            {
+                if (buw.delay != null) //window could be disposed in another thread
                 {
-                    buw.delay.Stop();
-                    buw.DoUpdate(
-                        buw.changedList.Distinct());
-                    buw.changedList.Clear();
+                    //buw.delay.Stop();
+                    buw.DoUpdate(copy.Distinct());
                     buw.delay.Start();
                 }
             }
@@ -76,10 +89,14 @@ namespace Implier.CommonControls.Windows
             MessageProvider = null;
             lock (lockObject)
             {
-                delay.Stop();
-                delay.Elapsed -= OnTimedEvent;
-                delay.Dispose();
-                delay = null;
+                changedList = new List<DisposableBaseObject>();
+                //delay.Stop();
+                lock (winLockObject)
+                {
+                    delay.Elapsed -= OnTimedEvent;
+                    delay.Dispose();
+                    delay = null;
+                }
             }
             Loaded -= Window_Loaded;
         }
@@ -105,10 +122,19 @@ namespace Implier.CommonControls.Windows
 
         private void OnTimedEvent(object sender, ElapsedEventArgs e)
         {
-            if (changedList.Count>0)
+            lock (winLockObject)
             {
-                delay.Stop();
-                Dispatcher.BeginInvoke(DispatcherPriority.Background, update, this);
+                if (delay != null)
+                {
+                    if (changedList.Count > 0)
+                    {
+                        Dispatcher.BeginInvoke(DispatcherPriority.Background, update, this);
+                    }
+                    else
+                    {
+                        delay.Start();
+                    }
+                }
             }
         }
         
@@ -120,9 +146,9 @@ namespace Implier.CommonControls.Windows
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            delay = new Timer {Interval = Tick, AutoReset = true};
+            delay = new Timer {Interval = Tick, AutoReset = false};
             delay.Elapsed += OnTimedEvent;
-            delay.Enabled = true;
+            //delay.Enabled = true;
             delay.Start();
         }
 

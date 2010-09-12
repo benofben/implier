@@ -17,7 +17,7 @@
             <Button Margin="2" Name="btnRemove" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnRemove_Click">
                 <Image Source="/Implier;component/Images/IconRemove.png" Width="16" Height="16" />
             </Button>
-            <Label Margin="2" Content="Exc/Sym" Name="label1" VerticalAlignment="Center" />
+            <TextBlock Margin="2" Text="Exc/Sym" VerticalAlignment="Center" Name="label"></TextBlock>
         </Grid>
     </Border>
 </UserControl>

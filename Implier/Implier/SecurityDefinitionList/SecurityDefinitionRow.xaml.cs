@@ -20,7 +20,8 @@ namespace Implier.SecurityDefinitionList
     /// </summary>
     public partial class SecurityDefinitionRow : UserControl
     {
-        internal SpreadMatrixData SpreadMatrixData { get; set; }
+        internal string Exchange { get; set; }
+        internal string Symbol { get; set; }
 
         public event RoutedEventHandler SpreadMatrixShowPressed;
         public event RoutedEventHandler RemovePressed;
@@ -28,11 +29,6 @@ namespace Implier.SecurityDefinitionList
         public SecurityDefinitionRow()
         {
             InitializeComponent();
-        }
-
-        public void Dispose()
-        {
-            //SpreadMatrixData.Dispose();
         }
 
         private void btnMatrixShow_Click(object sender, RoutedEventArgs e)

@@ -28,7 +28,7 @@ namespace Implier.Graph
         #region Methods
         public override string ToString()
         {
-            return ((Type == EntryType.Bid) ? "+" : "-") + DateTime.ToString("MMMyy");
+            return ((Type == EntryType.Bid) ? "-" : "+") + DateTime.ToString("MMMyy");
         }
         #endregion
 
@@ -65,7 +65,7 @@ namespace Implier.Graph
         public bool IsNeighbourTo(SideKey sideKey)
         {
             if (sideKey.DateTime.Year == DateTime.Year)
-                return Math.Abs(sideKey.DateTime.Month - sideKey.DateTime.Month) < 2;
+                return Math.Abs(sideKey.DateTime.Month - DateTime.Month) < 2;
             if (sideKey.DateTime.Year - DateTime.Year == 1)
                 return sideKey.DateTime.Month == 1 && DateTime.Month == 12;
             if (DateTime.Year - sideKey.DateTime.Year == 1)
@@ -176,7 +176,6 @@ namespace Implier.Graph
                         {
                             new SideConnection(proposal.GetSide(i), proposal.GetSide(i + 1), true);
                         }
-
 
                         //<TODO:2 Update external connections>
                         for (int i = 0; i < proposal.SideCount; i++)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -8,7 +9,7 @@ using QuickFix;
 
 namespace Implier.FIXApplication
 {
-    public partial class FixApplication : Application
+    internal partial class FixApplication : Application
     {
         #region Fields
         /// <summary>
@@ -28,6 +29,7 @@ namespace Implier.FIXApplication
         private FileStoreFactory storeFactory;
         private FileLogFactory logFactory;
         private MessageFactory messageFactory;
+        private int logonCount = 0;
 
         //SpreadMatrixData SMData = null;
         SpreadMatrixCollection spreadMatrixCollection = new SpreadMatrixCollection();
@@ -43,6 +45,12 @@ namespace Implier.FIXApplication
         #endregion
 
         #region Properties
+
+        public int LogonCount
+        {
+            get { return logonCount; }
+        }
+
         public string ConsoleText
         {
             get 
@@ -54,6 +62,8 @@ namespace Implier.FIXApplication
             }
         }
 
+        private int PriceSessionIndex{ get; set; }
+        private int OrderSessionIndex{ get; set; }
 
         internal SpreadMatrixCollection SpreadMatrixCollection
         {
@@ -79,12 +89,14 @@ namespace Implier.FIXApplication
         {
             try
             {
+                logonCount = 0;
                 Current = this;
                 settings = new SessionSettings(configFile);
                 storeFactory = new FileStoreFactory(settings);
                 logFactory = new FileLogFactory(settings);
                 messageFactory = new DefaultMessageFactory();
-                
+                SetSessionIndexes(configFile);
+
                 initiator = new SocketInitiator(this, storeFactory, settings, logFactory, messageFactory);
                 initiator.start();
                 AddText("Created initiator." + Environment.NewLine);
@@ -92,14 +104,43 @@ namespace Implier.FIXApplication
             catch (Exception exception)
             {
                 AddText(exception.Message + Environment.NewLine);
-
-                foreach (SessionID sessionId in settings.getSessions())
-                    onLogout(sessionId);
+                throw;
             }           
         }
         #endregion
 
         #region Methods
+
+        private void SetSessionIndexes(String configFile)
+        {
+            List<string> targetCompIDs = GetSessionTargetCompIDs(configFile);
+            int priceIndex = 0;
+            int orderIndex = 1;
+            
+            PriceSessionIndex = settings.getSessions().Cast<SessionID>().ToArray().ToList().FindIndex(
+                sessionId => sessionId.getTargetCompID().Equals(targetCompIDs[priceIndex]));
+
+            OrderSessionIndex = settings.getSessions().Cast<SessionID>().ToArray().ToList().FindIndex(
+                sessionId => sessionId.getTargetCompID().Equals(targetCompIDs[orderIndex]));
+        }
+
+        private List<string> GetSessionTargetCompIDs(String configFile)
+        {
+            List<string> targetCompIDs = new List<string>();
+
+             using(TextReader tr = new StreamReader(configFile))
+             {
+                 while (tr.Peek() >= 0)
+                 {
+                     string line = tr.ReadLine();
+
+                     if (line.Contains("TargetCompID"))
+                         targetCompIDs.Add(line.Split('=')[1]);
+                 }
+             }
+            return targetCompIDs;
+        }
+
         private void AddText(string text)
         {
             lock (lockObject)
@@ -118,14 +159,27 @@ namespace Implier.FIXApplication
                 initiator.Dispose();
                 AddText("Stopped initiator." + Environment.NewLine);
                 SpreadMatrixCollection.Clear();
-                AddText("Matrix is cleared." );
+                AddText("Matrix is cleared." + Environment.NewLine);
                 Current = null;
+                logonCount = 0;
             }
             catch (Exception exception)
             {
                 AddText(exception.Message + Environment.NewLine);
+                throw;
             }
         }
+
+        public SessionID GetOrderSession()
+        {
+            return settings.getSessions()[OrderSessionIndex] as SessionID;
+        }
+
+        public SessionID GetPriceSession()
+        {
+            return settings.getSessions()[PriceSessionIndex] as SessionID;
+        }
+
         #endregion 
 
         #region QuickFix.Application implementation
@@ -137,15 +191,23 @@ namespace Implier.FIXApplication
         public void onLogon(SessionID sessionID)
         {
             AddText("onLogon " + sessionID + Environment.NewLine);
+
+            if(logonCount<2)
+                logonCount ++;
+
             if (Logon != null)
-                Logon(this, new EventArgs());
+                Logon(this, new EventArgs<SessionID>(sessionID));
         }
 
         public void onLogout(SessionID sessionID)
         {
             AddText("onLogout " + sessionID + Environment.NewLine);
+            
+            if(logonCount>0)
+                logonCount --;
+
             if (Logout != null)
-                Logout(this, new EventArgs());
+                Logout(this, new EventArgs<SessionID>(sessionID));
         }
 
         public void RequestLogon()
@@ -217,6 +279,7 @@ namespace Implier.FIXApplication
             {
                 AddText("fromApp " + exception + Environment.NewLine);
                 AddText("fromApp " + message + Environment.NewLine);
+                throw;
             }
         }
         #endregion

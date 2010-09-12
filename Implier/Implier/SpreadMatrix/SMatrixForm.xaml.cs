@@ -26,25 +26,39 @@ namespace Implier
     /// <summary>
     /// Interaction logic for SMatrixForm.xaml
     /// </summary>
-    public partial class SMatrixForm : BaseUpdatableWindow
+    internal partial class SMatrixForm : BaseUpdatableWindow
     {
         public SMatrixForm()
         {
-            InitializeComponent();   
+            InitializeComponent();
+            PreviewMouseWheel += SMatrixForm_PreviewMouseWheel;
+        }
+
+        void SMatrixForm_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if ((Keyboard.Modifiers & ModifierKeys.Control) != 0)
+            {
+                sMatrix1.scrlGrid.ScrollToHorizontalOffset(sMatrix1.scrlGrid.HorizontalOffset - e.Delta);
+            }
+            else
+            {
+                sMatrix1.scrlGrid.ScrollToVerticalOffset(sMatrix1.scrlGrid.VerticalOffset - e.Delta);
+            }
+            e.Handled = true;
         }
 
         protected override void DoUpdate(IEnumerable<DisposableBaseObject> changed)
         {
-            sMatrix1.FillGrid((SpreadMatrixData)MessageProvider, changed.Cast<MDEntry>());
+            sMatrix1.FillGrid((SpreadMatrixData)MessageProvider, changed.Cast<SecurityEntry>());
         }
 
-        internal override void ForceTotalUpdate()
+        public override void ForceTotalUpdate()
         {
             SpreadMatrixData smd = (SpreadMatrixData)MessageProvider;
 
             lock (smd.LockObject)
             {
-                foreach (MDEntry value in smd.Values)
+                foreach (SecurityEntry value in smd.Values)
                 {
                     Changed(value);
                 }
@@ -57,6 +71,8 @@ namespace Implier
             lock (smd.LockObject)
             {
                 Title = smd.Exchange + "/" + smd.Symbol;
+                sMatrix1.Exchange = smd.Exchange;
+                sMatrix1.Symbol = smd.Symbol;
             }
         }
 

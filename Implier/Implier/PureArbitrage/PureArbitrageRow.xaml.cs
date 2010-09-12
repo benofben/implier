@@ -104,7 +104,7 @@ namespace Implier.PureArbitrage
                 if (price == value)
                     return;
                 price = value;
-                txtPrice.Text = value.ToString("F2");
+                txtPrice.Text = value.ToString(Constants.FloatingPointFormat);
                 SetProfitPerTrade();
             }
         }
@@ -130,7 +130,7 @@ namespace Implier.PureArbitrage
                 if (costPerLeg == value)
                     return;
                 costPerLeg = value;
-                txtCostPerLeg.Text = value.ToString("F2");
+                txtCostPerLeg.Text = value.ToString(Constants.FloatingPointFormat);
                 SetProfitPerTrade();
             }
         }
@@ -176,43 +176,27 @@ namespace Implier.PureArbitrage
 
         void SetProfitPerTrade()
         {
-            txtProfitPerTrade.Text = ProfitPerTrade.ToString("F2");
+            txtProfitPerTrade.Text = ProfitPerTrade.ToString(Constants.FloatingPointFormat);
             SetTotal();
         }
 
         void SetTotal()
         {
-            txtTotal.Text = Total.ToString("F2");
+            txtTotal.Text = Total.ToString(Constants.FloatingPointFormat);
         }
 
         private void txtCostPerLeg_TextChanged(object sender, TextChangedEventArgs e)
         {
-            double costPerLeg = 0;
-
-            try
-            {
-                costPerLeg = Convert.ToDouble(((TextBox) sender).Text);
-            }
-            catch (Exception)
-            {
-            }
-
-            CostPerLeg = costPerLeg;
+            Double value;
+            Double.TryParse(((TextBox) sender).Text, out value);
+            CostPerLeg = value;
         }
 
         private void txtBuyQuantity_TextChanged(object sender, TextChangedEventArgs e)
         {
-            int buyQuantity = 0;
-
-            try
-            {
-                buyQuantity = Convert.ToInt32(((TextBox) sender).Text);
-            }
-            catch (Exception)
-            {
-            }
-
-            BuyQuantity = buyQuantity;
+            int value;
+            int.TryParse(((TextBox) sender).Text, out value);
+            BuyQuantity = value;
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -236,8 +220,9 @@ namespace Implier.PureArbitrage
             PureArbitrageMLEGGrid grid = new PureArbitrageMLEGGrid();
             grid.FillDataGrid(Orders);
             grid.dataGrid.Columns[grid.dataGrid.Columns.Count - 1].Visibility = Visibility.Collapsed;
+            grid.dataGrid.Columns[grid.dataGrid.Columns.Count - 2].Visibility = Visibility.Collapsed;
 
-            grid.Title = "Legs - " + Symbol + " - Total:" + Total.ToString("F2");
+            grid.Title = "Legs - " + Symbol + " - Total:" + Total.ToString(Constants.FloatingPointFormat);
             grid.ShowDialog();
         }
 
@@ -256,7 +241,7 @@ namespace Implier.PureArbitrage
         private void btnRes_Click(object sender, RoutedEventArgs e)
         {
             PureArbitrageMLEGGrid grid = new PureArbitrageMLEGGrid();
-            grid.Title = "Trade Result - " + Symbol + " - Total:" + Total.ToString("F2");
+            grid.Title = "Trade Result - " + Symbol + " - Total:" + Total.ToString(Constants.FloatingPointFormat);
             grid.FillDataGrid(Orders);
             grid.ShowDialog();
         }

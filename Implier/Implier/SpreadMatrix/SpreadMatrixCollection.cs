@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using Implier.CommonControls.Windows;
 using Implier.FIXApplication;
+using QuickFix42;
 
 namespace Implier.SpreadMatrix
 {
-    internal class SpreadMatrixCollection : WindowSupportableObject
+    internal class SpreadMatrixCollection : SupportableObject
     {
         #region Fields
         readonly DualKeyDictionary<string, string,SpreadMatrixData> matrices = new DualKeyDictionary<string, string, SpreadMatrixData>();
@@ -15,9 +16,9 @@ namespace Implier.SpreadMatrix
 
         #region Methods
 
-        internal void ProcessMessage(string exchange, string symbol, MDEntry entry)
+        internal void ProcessMessage(string exchange, string symbol, MarketDataSnapshotFullRefresh entry)
         {            
-            Get(exchange, symbol).Add(entry);
+            Get(exchange, symbol).Update(entry);
             RaizeChanged(Get(exchange, symbol));
         }
 
@@ -37,11 +38,16 @@ namespace Implier.SpreadMatrix
                 return matrices.GetValue(exchange, symbol);
             }
         }
+
         internal void Remove(string exchange, string symbol)
         {
             lock (LockObject)
             {
                 SpreadMatrixData spreadMatrixData = matrices.GetValue(exchange, symbol);
+
+                //foreach (SecurityEntry securityEntry in spreadMatrixData.Values)
+                //    FixApplication.Current.MarketDataRequestReject(securityEntry.MDReqID);
+
                 spreadMatrixData.Dispose();
                 matrices.Remove(exchange, symbol);
                 RaizeChanged(spreadMatrixData);
@@ -99,7 +105,13 @@ namespace Implier.SpreadMatrix
         /// </summary>
         internal IEnumerable<SpreadMatrixData> Values
         {
-            get { return matrices.Values; }
+            get
+            {
+                lock (LockObject)
+                {
+                    return matrices.Values;
+                }
+            }
         }
         #endregion
     }

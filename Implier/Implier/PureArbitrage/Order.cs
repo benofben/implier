@@ -131,8 +131,8 @@ namespace Implier.PureArbitrage
     internal partial class Order : DisposableBaseObject
     {
         #region Fields
-        MDEntry weakCopy;
-        int curGroupIndex = -1;
+        SecurityEntry weakCopy;
+        MDEntryGroup currentMDGroup;
         List<QuickFix42.ExecutionReport> executionReports = new List<QuickFix42.ExecutionReport>();
         OrderStatus orderStatus = OrderStatus.Init;
         #endregion
@@ -174,14 +174,31 @@ namespace Implier.PureArbitrage
         #region Constructor
         public Order(IProposal proposal, double quantity)
         {
-            curGroupIndex = ((Proposal)proposal).OwnerEntry.GetIndex((MDEntryGroup)proposal);
+            int propIndex = -1;
+            SecurityEntry ownerEntry = ((MDEntryGroup) proposal).OwnerEntry;
+            propIndex = ownerEntry.GetGroupIndex((MDEntryGroup)proposal);
+
             weakCopy = ((Proposal) proposal).OwnerEntry.WeakClone();
-            OrderMessage = FixApplication.NewOrder(proposal, quantity);
+            currentMDGroup = weakCopy.GetGroup((uint) propIndex);
+
+            OrderMessage = FixApplication.Current.NewOrder(proposal, quantity);
         }
+
+        public Order(MDEntryGroup entryGroup, double quantity)
+        {
+            int propIndex = -1;
+            SecurityEntry ownerEntry = entryGroup.OwnerEntry;
+            propIndex = ownerEntry.GetGroupIndex(entryGroup);
+
+            weakCopy = entryGroup.OwnerEntry.WeakClone();
+            currentMDGroup = weakCopy.GetGroup((uint)propIndex);
+
+            OrderMessage = FixApplication.Current.NewOrder(entryGroup, quantity);
+        }
+
         #endregion
 
         #region Methods
-
         public QuickFix42.ExecutionReport GetExecutionReport(int index)
         {
             lock (LockObject)

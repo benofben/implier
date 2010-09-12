@@ -9,15 +9,14 @@ using QuickFix42;
 namespace Implier.Graph
 {
     [Flags]
-    public enum EntryType
+    internal enum EntryType
     {
         Bid,
         Offer
     }
-    public interface IProposal
+    internal interface IProposal
     {
         #region Private
-
 
         void DNUAddSide(ContractSide side);
         void DNURemoveSide(ContractSide side);
@@ -49,7 +48,7 @@ namespace Implier.Graph
     }
 
 
-    public class Proposal : MDEntryGroup, IProposal
+    internal class Proposal : MDEntryGroup, IProposal
     {
         class SideComparer: Comparer<ContractSide>
         {
@@ -88,27 +87,28 @@ namespace Implier.Graph
 
         #endregion
 
-        internal Proposal(MarketDataSnapshotFullRefresh.NoMDEntries MDGroup, MDEntry MDOwner, MDDatePair datePair, SideController sideController)
-            : base(MDGroup, MDOwner)
+        internal Proposal(MarketDataSnapshotFullRefresh.NoMDEntries group, SecurityEntry securityOwner, MDDatePair datePair, SideController sideController)
+            : base(group, securityOwner)
         {
             SideController = sideController;
-            switch (base.EntryType)
+            switch (base.MDEntryType)
             {
                 case QuickFix.MDEntryType.BID:
-                    Action = Graph.EntryType.Bid;
-                    Price = base.EntryPx;
+                    Action = !securityOwner.IsInverted ? Graph.EntryType.Bid : Graph.EntryType.Offer;
+                    Price = base.MDEntryPx;
                     break;
 
                 case QuickFix.MDEntryType.OFFER:
-                    Action = Graph.EntryType.Offer;
-                    Price = -base.EntryPx;
+                    Action = !securityOwner.IsInverted ? Graph.EntryType.Offer : Graph.EntryType.Bid;
+                    Price = -base.MDEntryPx;
                     break;
 
                 default:
                     throw new Exception("Undefined entry type.");
             }
-            
-            Quantity = base.EntrySize;
+
+            //Price *= (!securityOwner.IsInverted ? 1 : -1);
+            Quantity = base.MDEntrySize;
 
             new ContractSide(datePair.Date1, this, SideController);
 

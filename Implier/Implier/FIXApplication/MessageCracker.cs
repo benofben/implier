@@ -8,13 +8,7 @@ using QuickFix;
 
 namespace Implier.FIXApplication
 {
-    internal enum SessionType
-    {
-        Order = 0,
-        Price = 1
-    }
-
-    public partial class FixApplication : MessageCracker
+    internal partial class FixApplication : MessageCracker
     {
         #region Delegaes and Events
         public event MessageRecieveHandler ExecutionReportRecieved;
@@ -27,10 +21,11 @@ namespace Implier.FIXApplication
             QuickFix42.SecurityDefinitionRequest message = new QuickFix42.SecurityDefinitionRequest(new SecurityReqID(DateTime.Now.ToString()), new SecurityRequestType(SecurityRequestType.REQUEST_LIST_SECURITIES));
             message.setField(new Symbol(symbol));
             message.setField(new SecurityExchange(exchange));
+            message.setField(new BooleanField(17000, true));
 
             try
             {
-                if (Session.sendToTarget(message, settings.getSessions()[(int)SessionType.Price] as SessionID))
+                if (Session.sendToTarget(message, GetPriceSession()))
                 {
                     SpreadMatrixCollection.Add(exchange, symbol);
                     return SpreadMatrixCollection.Get(exchange, symbol);
@@ -41,7 +36,24 @@ namespace Implier.FIXApplication
             catch (SessionNotFound exception)
             {
                 AddText(exception.Message + Environment.NewLine);
-                return null;
+                throw;
+            }
+        }
+
+        public void RequestSymbols(SpreadMatrixData spreadMatrixData)
+        {
+            QuickFix42.SecurityDefinitionRequest message = new QuickFix42.SecurityDefinitionRequest(new SecurityReqID(DateTime.Now.ToString()), new SecurityRequestType(SecurityRequestType.REQUEST_LIST_SECURITIES));
+            message.setField(new Symbol(spreadMatrixData.Symbol));
+            message.setField(new SecurityExchange(spreadMatrixData.Exchange));
+
+            try
+            {
+                Session.sendToTarget(message, GetPriceSession());
+            }
+            catch (SessionNotFound exception)
+            {
+                AddText(exception.Message + Environment.NewLine);
+                throw;
             }
         }
 
@@ -83,51 +95,56 @@ namespace Implier.FIXApplication
 
             SecurityID securityId = new SecurityID();
             securityDefinition.getField(securityId);
-            noRelatedSym.setField(securityId);
-
+            noRelatedSym.setField(securityId);                    
+            
             marketDataRequest.addGroup(noRelatedSym);
 
-            Session.sendToTarget(marketDataRequest, settings.getSessions()[(int)SessionType.Price] as SessionID);
+            Session.sendToTarget(marketDataRequest, GetPriceSession());
         }
 
         public void MarketDataRequestReject(string MDReqID)
         {
             QuickFix42.MarketDataRequestReject marketDataRequestReject = new QuickFix42.MarketDataRequestReject(new MDReqID(MDReqID));
 
-            Session.sendToTarget(marketDataRequestReject, settings.getSessions()[(int)SessionType.Price] as SessionID);
+            Session.sendToTarget(marketDataRequestReject, GetPriceSession());
         }
-
-        public static Message NewOrder(IProposal proposal, double quantity)
+        
+        #region Orders
+        public Message NewOrder(MDEntryGroup entryGroup, double quantity)
         {
+            bool isInvertedSecurity = entryGroup.OwnerEntry.IsInverted;
             Message message = null;
-            Account account = new Account("nplatonic");
+            Account account = new Account(GetOrderSession().getSenderCompID().ToLower());
 
-            //ClOrdID clOrdId = new ClOrdID("ClOrd_" + DateTime.Now.ToString("yyMMdd_HHmmss") );
             ClOrdID clOrdId = new ClOrdID("ClOrd_" + Guid.NewGuid());
             HandlInst handlInst = new HandlInst(HandlInst.AUTOMATED_EXECUTION_ORDER_PRIVATE_NO_BROKER_INTERVENTION);
             OrdType ordType = new OrdType(OrdType.LIMIT);
             TimeInForce timeInForce = new TimeInForce(TimeInForce.FILL_OR_KILL);
             TransactTime transactTime = new TransactTime();
 
-            Price price = new Price(((Proposal) proposal).EntryPx);
-            SecurityExchange securityExchange = new SecurityExchange(((Proposal) proposal).OwnerEntry.SecurityExchange);
-            SecurityType securityType = new SecurityType(((Proposal) proposal).OwnerEntry.SecurityType);
-            Symbol symbol = new Symbol(((Proposal) proposal).OwnerEntry.Symbol);
-            SecurityID securityId = new SecurityID(((Proposal) proposal).OwnerEntry.SecurityID);
+            Price price = new Price(entryGroup.MDEntryPx);
+            SecurityExchange securityExchange = new SecurityExchange(entryGroup.OwnerEntry.SecurityExchange);
+            SecurityType securityType = new SecurityType(entryGroup.OwnerEntry.SecurityType);
+            Symbol symbol = new Symbol(entryGroup.OwnerEntry.Symbol);
+            SecurityID securityId = new SecurityID(entryGroup.OwnerEntry.SecurityID);
             OrderQty orderQty = new OrderQty(quantity);
 
             Side side = null;
-            switch (proposal.Action)
+            switch (entryGroup.MDEntryType)
             {
-                case EntryType.Bid:
+                case MDEntryType.BID:
                     side = new Side(Side.SELL);
                     break;
-                case EntryType.Offer:
+                case MDEntryType.OFFER:
                     side = new Side(Side.BUY);
                     break;
                 default:
                     throw new Exception("Undefined entry type.");
             }
+
+            //if (isInvertedSecurity && side.getValue() == Side.BUY)
+            //    price = new Price(-price.getValue());
+
 
             message = new QuickFix42.NewOrderSingle();
 
@@ -146,18 +163,62 @@ namespace Implier.FIXApplication
 
             ((QuickFix42.NewOrderSingle) message).set(securityType);
 
-            /*if (((Proposal)proposal).OwnerEntry.SecurityType == SecurityType.FUTURE)
+            return message;
+        }
+
+        public Message NewOrder(IProposal proposal, double quantity)
+        {
+            bool isInvertedSecurity = ((Proposal)proposal).OwnerEntry.IsInverted;
+            Message message = null;
+            Account account = new Account(GetOrderSession().getSenderCompID().ToLower());
+
+            ClOrdID clOrdId = new ClOrdID("ClOrd_" + Guid.NewGuid());
+            HandlInst handlInst = new HandlInst(HandlInst.AUTOMATED_EXECUTION_ORDER_PRIVATE_NO_BROKER_INTERVENTION);
+            OrdType ordType = new OrdType(OrdType.LIMIT);
+            TimeInForce timeInForce = new TimeInForce(TimeInForce.FILL_OR_KILL);
+            TransactTime transactTime = new TransactTime();
+
+            Price price = new Price(((Proposal)proposal).MDEntryPx);
+            SecurityExchange securityExchange = new SecurityExchange(((Proposal)proposal).OwnerEntry.SecurityExchange);
+            SecurityType securityType = new SecurityType(((Proposal)proposal).OwnerEntry.SecurityType);
+            Symbol symbol = new Symbol(((Proposal)proposal).OwnerEntry.Symbol);
+            SecurityID securityId = new SecurityID(((Proposal)proposal).OwnerEntry.SecurityID);
+            OrderQty orderQty = new OrderQty(quantity);
+
+            Side side = null;
+            switch (proposal.Action)
             {
-                ContractSide contractSide = proposal.GetSide(0);
-                String date = contractSide.SideKey.DateTime.ToString("yyyyMM");
-                MaturityMonthYear maturityMonthYear = new MaturityMonthYear(date);
-                ((QuickFix42.NewOrderSingle) message).set(maturityMonthYear);
-            }*/
+                case EntryType.Bid:
+                    side = !isInvertedSecurity ? new Side(Side.SELL) : new Side(Side.BUY);
+                    break;
+                case EntryType.Offer:
+                    side = !isInvertedSecurity ? new Side(Side.BUY) : new Side(Side.SELL);
+                    break;
+                default:
+                    throw new Exception("Undefined entry type.");
+            }
+
+            message = new QuickFix42.NewOrderSingle();
+
+            ((QuickFix42.NewOrderSingle)message).set(account);
+
+            ((QuickFix42.NewOrderSingle)message).set(clOrdId);
+            ((QuickFix42.NewOrderSingle)message).set(side);
+            ((QuickFix42.NewOrderSingle)message).set(transactTime);
+            ((QuickFix42.NewOrderSingle)message).set(ordType);
+
+            ((QuickFix42.NewOrderSingle)message).set(price);
+            ((QuickFix42.NewOrderSingle)message).set(orderQty);
+            ((QuickFix42.NewOrderSingle)message).set(securityId);
+            ((QuickFix42.NewOrderSingle)message).set(securityExchange);
+            ((QuickFix42.NewOrderSingle)message).set(timeInForce);
+
+            ((QuickFix42.NewOrderSingle)message).set(securityType);
 
             return message;
         }
 
-        public static IEnumerable<Message> NewOrders(Trade trade, double minQuantity)
+        public IEnumerable<Message> NewOrders(Trade trade, double minQuantity)
         {
             //BidType bidType = new BidType(BidType.NON_DISCLOSED_STYLE);
 
@@ -187,20 +248,22 @@ namespace Implier.FIXApplication
             {
                 try
                 {
-                    Session.sendToTarget(message, settings.getSessions()[(int)SessionType.Order] as SessionID);
+                    Session.sendToTarget(message, GetOrderSession());
                     AddText("newOrder " + message + Environment.NewLine);
                 }
                 catch (SessionNotFound exception)
                 {
                     AddText(exception.Message + Environment.NewLine);
+                    throw;
                 }
             }
         }
+        #endregion
 
         #endregion
 
         #region MessageCracker overrides
-
+        
         public override void onMessage(QuickFix42.ExecutionReport executionReport, SessionID sessionID)
         {
             AddText("executionReport " + executionReport + Environment.NewLine);
@@ -223,14 +286,22 @@ namespace Implier.FIXApplication
                 Symbol symbol = new Symbol();
                 securityDefinition.getField(symbol);
 
+                SecurityType securityType = new SecurityType();
+                securityDefinition.getField(securityType);
+
                 SpreadMatrixData smd = SpreadMatrixCollection.Get(securityExchange.getValue(), symbol.getValue());
 
                 if (smd != null)
+                {
+                    SecurityEntry entry = new SecurityEntry(securityDefinition);
+                    smd.Add(entry);
                     MarketDataRequest(securityDefinition);
+                }
             }
             catch (Exception exception)
             {
                 AddText(exception.Message + Environment.NewLine);
+                throw;
             }
         }
 
@@ -243,25 +314,39 @@ namespace Implier.FIXApplication
 
             SpreadMatrixData smd = SpreadMatrixCollection.Get(exchange, symbol);
 
-            if (smd != null)
-            {
-                MDEntry entry = new MDEntry(marketDataSnapshotFullRefresh, smd.SideController);
-                SpreadMatrixCollection.ProcessMessage(exchange, symbol, entry);
+            if (smd == null) return;
 
-                //testing order
-                /*if (entry.GroupCount > 0 )
-                {
-                    Message ord = NewOrder((Proposal) entry.GetGroup(0), 1);
-                    AddText("New Order " + ord + Environment.NewLine);
-                    Session.sendToTarget(ord, settings.getSessions()[(int) SessionType.Order] as SessionID);
-                }*/
-            }
+            SpreadMatrixCollection.ProcessMessage(exchange, symbol, marketDataSnapshotFullRefresh);
+
+            SecurityEntry entry = smd.Get(marketDataSnapshotFullRefresh.getSecurityID().getValue());
+
+            //testing order
+            //if (entry != null)
+            //    ProccessOrder(entry);
         }
 
-        /*public override void onMessage(QuickFix42.MarketDataIncrementalRefresh marketDataIncrementalRefresh, SessionID sessionID)
+        public override void onMessage(QuickFix42.MarketDataRequestReject marketDataRequestReject, SessionID sessionID)
+        {
+            AddText("marketDataRequestReject " + marketDataRequestReject + Environment.NewLine);
+        }
+
+        /*
+        public override void onMessage(QuickFix42.MarketDataIncrementalRefresh marketDataIncrementalRefresh, SessionID sessionID)
         {
             //AddText("marketDataIncrementalRefresh " + marketDataIncrementalRefresh + Environment.NewLine);
-        }*/
+        }
+        */
         #endregion
+
+        private void ProccessOrder(SecurityEntry entry)
+        {
+            for (int i = 0; i < entry.MDGroupCount; i++)
+            {
+                MDEntryGroup group = entry.GetGroup((uint) i);
+
+                Message ord = NewOrder((IProposal)group, group.MDEntrySize);
+                Session.sendToTarget(ord, GetOrderSession());
+            }
+        }
     }
 }

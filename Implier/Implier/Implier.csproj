@@ -72,6 +72,7 @@
       <DependentUpon>GridHeader.xaml</DependentUpon>
     </Compile>
     <Compile Include="Constants.cs" />
+    <Compile Include="FIXApplication\LogModeController.cs" />
     <Compile Include="FIXApplication\WindowSupportable.cs" />
     <Compile Include="FIXApplication\MessageCracker.cs" />
     <Compile Include="Graph\Contract.cs" />
@@ -116,6 +117,7 @@
     </Compile>
     <Compile Include="SpreadMatrix\SpreadMatrixCollection.cs" />
     <Compile Include="SpreadMatrix\SpreadMatrixData.cs" />
+    <Compile Include="SpreadMatrix\SpreadMatrixDataCell.cs" />
     <Compile Include="Utils.cs" />
     <Page Include="CommonControls\GridHeader.xaml">
       <SubType>Designer</SubType>
@@ -197,9 +199,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="SchneiderBen.cfg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -216,6 +215,12 @@
     <None Include="DevTTBen.cfg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="SchneiderBen.cfg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="SchneiderDan.cfg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="TTFIX42.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
@@ -226,6 +231,23 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\IconRemove.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cbot.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="cme.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ice.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="liffe.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="montreal.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

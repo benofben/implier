@@ -11,15 +11,63 @@ namespace Implier
     [AttributeUsage(AttributeTargets.Property|AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     internal class IsCloneInheritable : Attribute
     {
-        private bool IsInheritable = false;
-        public IsCloneInheritable()
+    }
+
+    /// <summary>
+    /// Generic Singleton (thread-safe using the generic-class and with lazy initialization).
+    /// </summary>
+    /// <typeparam name="T">Singleton class</typeparam>
+    internal class Singleton<T> where T: class
+    {
+        /// Protected default constructor is required in order to prevent the creation of an instance of Singleton
+        protected Singleton() { }
+
+        /// The factory is used for lazy initialization of an instance
+        private sealed class SingletonCreator<S> where S : class
         {
-            IsInheritable = true;
+            /// Use Reflection to instantiate the class without a public constructor
+            private static readonly S instance = (S)typeof(S).GetConstructor(
+                        BindingFlags.Instance | BindingFlags.NonPublic,
+                        null,
+                        new Type[0],
+                        new ParameterModifier[0]).Invoke(null);
+
+            public static S CreatorInstance
+            {
+                get { return instance; }
+            }
+        }
+
+        public static T Instance
+        {
+            get { return SingletonCreator<T>.CreatorInstance; }
+        }
+    }
+
+    public class EventArgs<T> : EventArgs
+    {
+        public EventArgs(T value)
+        {
+            val = value;
+        }
+
+        private T val;
+
+        public T Value
+        {
+            get { return val; }
         }
     }
 
     internal class Utils
     {
+        public static string GetCurrentFolder()
+        {
+            String path = System.Reflection.Assembly.GetExecutingAssembly().GetModules()[0].FullyQualifiedName;
+            String folder = Path.GetDirectoryName(path);
+            return folder;
+        }
+
         internal static void CopyPropertiesAndFields<T>(T source, T clone) 
             where T: class
         {
@@ -42,8 +90,9 @@ namespace Implier
 
         public static class Log
         {
-            static string path = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "ImplierLog.txt";
-            public static void Write(string message)
+            static string path = Constants.ImplierLogPath;
+            
+            public static void WriteLine(string message)
             {
                 using (TextWriter tw = File.AppendText(path))
                 {
@@ -102,20 +151,14 @@ namespace Implier
             {
                 return y == null ? 0 : -1;
             }
-            else
+            if (y == null)
             {
-                if (y == null)
-                {
-                    return 1;
-                }
-                else
-                {
-                    int retval = x.Length.CompareTo(y.Length);
-
-                    return retval != 0 ? retval : x.CompareTo(y);
-                }
+                return 1;
             }
-        } 
+            int retval = x.Length.CompareTo(y.Length);
+
+            return retval != 0 ? retval : x.CompareTo(y);
+        }
 
         static internal TValue GetSafeValueByKey<TKey, TValue>(Dictionary<TKey, TValue> dict, TKey key) where TValue : new()
         {
@@ -127,7 +170,6 @@ namespace Implier
             }
             return result;
         }
-
     }
 
     internal class SafeDictionary<TKey, TValue> : Dictionary<TKey, TValue>

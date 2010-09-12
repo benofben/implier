@@ -43,7 +43,8 @@
 
                 <DataGridTextColumn Header="Quantity" Binding="{Binding Mode=OneWay, Path=Quantity}" />
                 <DataGridTextColumn Header="Side" Binding="{Binding Mode=OneWay, Path=SideText}" />
-                <DataGridTextColumn Header="Order Status" Binding="{Binding Mode=OneWay, Path=OrderStatusText}" />
+                <DataGridTextColumn Header="Order Status" Binding="{Binding Mode=OneWay, Path=OrderStatusText}"/>
+                <DataGridTextColumn Header="Order Status Desc" Binding="{Binding Mode=OneWay, Path=OrderStatusDesc}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

@@ -17,7 +17,7 @@ namespace Implier.CommonControls
     /// <summary>
     /// Interaction logic for GridHeader.xaml
     /// </summary>
-    public partial class GridHeader : UserControl
+    internal partial class GridHeader : UserControl
     {
         public event RoutedEventHandler Click;
         

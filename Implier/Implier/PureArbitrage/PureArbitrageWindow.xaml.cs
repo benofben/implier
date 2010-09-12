@@ -22,7 +22,7 @@ namespace Implier
     /// <summary>
     /// Interaction logic for PureArbitrageWindow.xaml
     /// </summary>
-    public partial class PureArbitrageWindow : BaseUpdatableWindow
+    internal partial class PureArbitrageWindow : BaseUpdatableWindow
     {
         private bool onlyProfitable = false;
         public PureArbitrageWindow()
@@ -87,7 +87,7 @@ namespace Implier
             pureArbitrageGrid.Clear();
         }
 
-        internal override void ForceTotalUpdate()
+        public override void ForceTotalUpdate()
         {            
             SpreadMatrixCollection smc = (SpreadMatrixCollection)MessageProvider;
             pureArbitrageGrid.Clear();
@@ -107,6 +107,5 @@ namespace Implier
             ((Button) sender).Content = (!onlyProfitable) ? "Show Only Profitable" : "Show All";
             ForceTotalUpdate();
         }
-
     }
 }

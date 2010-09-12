@@ -7,8 +7,53 @@ using Implier.Graph;
 
 namespace Implier.FIXApplication
 {
-    public class WindowSupportableObject: DisposableBaseObject
+    internal class SupportableObject : DisposableBaseObject, ISupportableObject
     {
+        readonly List<IUpdatableObject> updatableObjects = new List<IUpdatableObject>();
+
+        public IEnumerable<IUpdatableObject> UpdatableObjects
+        {
+            get { return updatableObjects; }
+        }
+
+        public void DNURegisterUpdatableObject(IUpdatableObject obj)
+        {
+            updatableObjects.Add(obj);
+        }
+
+        public void DNUUnregisterUpdatableObject(IUpdatableObject obj)
+        {
+            updatableObjects.Remove(obj);
+        }
+
+        public IUpdatableObject SearchForUpdatableObject(Func<IUpdatableObject, bool> func)
+        {
+            IEnumerable<IUpdatableObject> found = updatableObjects.Where(func);
+            return found.Count() > 0 ? found.First() : null;
+        }
+
+        public void RaizeChanged(DisposableBaseObject changed)
+        {
+            foreach (IUpdatableObject uo in updatableObjects)
+            {
+                uo.Changed(changed);
+            }
+        }
+
+        protected override void DoDispose()
+        {
+            while (updatableObjects.Count > 0)
+            {
+                IUpdatableObject buo = updatableObjects[0];
+                buo.MessageProvider = null;
+            }
+        }
+    }
+
+
+    /*internal class WindowSupportableObject : SupportableObject
+    {
+        
         readonly List<BaseUpdatableWindow> windows = new List<BaseUpdatableWindow>();
         internal void DNURegisterWindow(BaseUpdatableWindow wnd)
         {
@@ -19,16 +64,20 @@ namespace Implier.FIXApplication
             windows.Remove(wnd);
         }
         
+
         protected override void DoDispose()
         {
-            while (windows.Count > 0)
+            base.DoDispose();
+
+            while (UpdatableObjects.Count() > 0)
             {
-                BaseUpdatableWindow buw = windows[0];
-                buw.MessageProvider = null;
-                buw.Close();
+                IUpdatableObject uo = UpdatableObjects.ToArray()[0];
+                if (uo is BaseUpdatableWindow)
+                    ((BaseUpdatableWindow) uo).Close();
             }
         }
 
+        
         internal BaseUpdatableWindow SearchForWindow(Func<BaseUpdatableWindow,bool> func)
         {
             IEnumerable<BaseUpdatableWindow> found = windows.Where(func);
@@ -47,9 +96,10 @@ namespace Implier.FIXApplication
                 window.Changed(changed);
             }
         }
+        
 
-    }
-
+    }*/
+    
     //interface IBaseUpdateableWindow
     //{
     //    IWindowSupportable MessageProvider 
