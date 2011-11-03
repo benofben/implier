@@ -1,0 +1,13 @@
+def getFixField(tag, message):
+    return 0
+
+
+
+def run():
+    file = open('C:\workspace\data\BVMF\MarketData_201105\MarketDataGather_201105_26a31\MarketDataGather_20110526.txt')
+    for line in file:
+        getFixField(35, line)
+    file.close()
+    
+run()
+

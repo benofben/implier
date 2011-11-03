@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;Implier/src/demo data&apos; to &apos;sample data&apos;" description="Rename resource &apos;demo data&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/demo data" name="sample data" stamp="1320262271017" updateReferences="true"/>
+</session>

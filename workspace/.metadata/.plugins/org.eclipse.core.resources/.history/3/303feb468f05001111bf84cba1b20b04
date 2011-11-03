@@ -1,0 +1,7 @@
+file = open('C:\\workspace\\data\\CME\\20110927\\secdef.dat_20110927\\secdef.dat')
+lines = file.readlines()
+file.close()
+
+for line in lines:
+	print(line)
+	break

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;Implier/data&apos;" deleteContents="false" description="Delete resource &apos;Implier/data&apos;" element1="/Implier/data" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1318090046765"/>
+</session>

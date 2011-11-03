@@ -1,0 +1,5 @@
+#Fri Oct 14 17:43:48 EDT 2011
+com.aptana.db.ide-idUUID=f78ad239-74e3-46cf-9846-91d002c0c4c4
+eclipse.preferences.version=1
+SUBSTITUTE_TABS=false
+INTERPRETER_PATH_NEW=Name\:python\:EndName\:Version3.2Executable\:C\:\\Python32\\python.exe|C\:\\Python32\\DLLs|C\:\\Python32\\lib|C\:\\Python32|C\:\\Python32\\lib\\site-packages@$|Image|OpenGL|__main__|_ast|_bisect|_bytesio|_codecs|_codecs_cn|_codecs_hk|_codecs_iso2022|_codecs_jp|_codecs_kr|_codecs_tw|_collections|_csv|_datetime|_fileio|_functools|_heapq|_hotshot|_io|_json|_locale|_lsprof|_md5|_multibytecodec|_pickle|_random|_sha|_sha1|_sha256|_sha512|_sre|_string|_struct|_subprocess|_symtable|_thread|_warnings|_weakref|_winreg|array|atexit|audioop|binascii|builtins|cPickle|cStringIO|cmath|datetime|email|errno|exceptions|future_builtins|gc|hashlib|imageop|imp|itertools|marshal|math|mmap|msvcrt|nt|numpy|operator|os|os.path|parser|pytest|scipy|signal|socket|strop|sys|thread|time|winreg|wx|wxPython|xxsubtype|zipimport|zlib&&&&&
