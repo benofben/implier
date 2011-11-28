@@ -1,8 +1,0 @@
-file = open('C:\workspace\data\BVMF\MarketData_201105\MarketDataGather_201105_26a31\MarketDataGather_20110526.txt')
-
-for line in f.xreadlines():
-    print line
- f.close()
- 
-file.close()
-

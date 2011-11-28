@@ -1,6 +1,0 @@
-file = open('C:\workspace\data\BVMF\MarketData_201105\MarketDataGather_201105_26a31\MarketDataGather_20110526.txt')
-
-while(line = file.readline()):
-    print(line)
-
-file.close()

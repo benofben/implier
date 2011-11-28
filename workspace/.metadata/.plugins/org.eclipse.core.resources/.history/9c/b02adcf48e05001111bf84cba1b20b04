@@ -1,6 +1,0 @@
-file = open('C:\workspace\data\CME\XCME_LN_FUT_110110.TXT')
-lines = file.readlines()
-file.close()
-
-for line in lines:
-	pass
