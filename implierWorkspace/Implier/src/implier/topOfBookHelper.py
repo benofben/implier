@@ -9,6 +9,10 @@ def getTopOfBook(orderBook, myFixParser):
 		if len(topOfBook[securityDesc]['LEGS'])>1:
 			topOfBook[securityDesc]['LEGS'][1]='-' + topOfBook[securityDesc]['LEGS'][1]
 		
+		### handle butterflies
+		if len(topOfBook[securityDesc]['LEGS'])==3:
+			print('Got a butterfly')
+			
 		try:
 			topOfBook[securityDesc]['BID']=float(myFixParser.getField(270,orderBook[securityDesc]['BID'][0]))
 		except TypeError:

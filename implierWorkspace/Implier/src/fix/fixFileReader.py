@@ -14,8 +14,13 @@ class fixFileReader:
 		
 		fields = self.myFixParser.getFields(message)
 		fields = self.myFixParser.lookupFields(fields)
-		msgType = self.myFixParser.getField(35, fields)
 		
+		msgType = self.myFixParser.getField(35, fields)
+		sendingTime = self.myFixParser.getField(52, fields)
+		
+		print('Sending time is ' + sendingTime + '.  Order book length is ' + str(len(self.orderbook)) + '.') 
+		
+				
 		# skip SecurityStatus
 		if msgType == 'f':
 			pass
@@ -68,8 +73,15 @@ class fixFileReader:
 					pass
 				elif mdEntryType=='OPENING_PRICE':
 					pass
+				elif mdEntryType=='TRADING_SESSION_HIGH_PRICE':
+					pass
+				elif mdEntryType=='TRADING_SESSION_LOW_PRICE':
+					pass
+				elif mdEntryType=='SESSION_LOW_OFFER':
+					pass
 				else:
 					print('Got an mdEntryType I do not know how to deal with ' + str(mdEntryType))
+					exit()
 		
 		return self.orderbook
 	

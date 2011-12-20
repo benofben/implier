@@ -58,7 +58,7 @@ class fixParser:
 		#	d[fix field number][field value] = fix field value description
 		d={}
 		
-		fixDictionaryFilename = 'FIX50SP1.xml'
+		fixDictionaryFilename = 'fix/FIX50SP1.xml'
 		
 		fixDictionaryFile = open(fixDictionaryFilename)
 		fixDictionaryXMLString = fixDictionaryFile.read()
