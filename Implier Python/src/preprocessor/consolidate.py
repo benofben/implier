@@ -2,9 +2,10 @@ import os
 import fix.fixParser as fixParser
 
 def consolidateDays():
-	securitiesDirectoryName = 'C:\\implierData\\si1week\\'
+	#securitiesDirectoryName = 'I:\\nym\\'
+	securitiesDirectoryName = 'C:\\Users\\ben\\Desktop\\si1week\\'
 	
-	consolidateDay(securitiesDirectoryName, 'C:\\implierData\\output.txt')
+	consolidateDay(securitiesDirectoryName, securitiesDirectoryName + '..\\output.txt')
 
 # Go through all the files for a given day and writes them to a single file ordered by tick time.
 def consolidateDay(securitiesDirectoryName, outputFilename):
