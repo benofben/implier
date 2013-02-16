@@ -73,8 +73,15 @@ class fixFileReader:
 					pass
 				elif mdEntryType=='OPENING_PRICE':
 					pass
+				elif mdEntryType=='TRADING_SESSION_HIGH_PRICE':
+					pass
+				elif mdEntryType=='TRADING_SESSION_LOW_PRICE':
+					pass
+				elif mdEntryType=='SESSION_LOW_OFFER':
+					pass
 				else:
 					print('Got an mdEntryType I do not know how to deal with ' + str(mdEntryType))
+					exit()
 		
 		return self.orderbook
 	

@@ -5,24 +5,23 @@ import implier.algorithm
 import time
 
 def run():
-	inputFilename = 'C:\\Users\\ben\\Desktop\\output.txt'
+	inputFilename = 'C:\\implierData\\output.txt'
 	myFixParser = fix.fixParser.fixParser()
 	
 	print('Working on file ' + inputFilename)
 	myFixFileReader = fix.fixFileReader.fixFileReader(inputFilename, myFixParser)
-
-	startTime = time.time()
 	
-	while(True):		
+	while(True):
 		orderbook = myFixFileReader.updateOrderBookWithNextLine()
-		if orderbook:			
+		if orderbook:
 			topOfBook = implier.topOfBookHelper.getTopOfBook(orderbook, myFixParser)
 			
-			#topOfBookHelper.printTopOfBook(topOfBook)
+			#implier.topOfBookHelper.printTopOfBook(topOfBook)
+			
+			startTime = time.time()
 			implier.algorithm.run(topOfBook)
+			elapsedTime = time.time() - startTime
+			print('It took ' + str(int(elapsedTime)) + ' seconds to rerun the algorithm.')
 		else:
 			# End of file
 			break
-
-		elapsedTime = time.time() - startTime
-		print('It took ' + str(int(elapsedTime)) + ' seconds to rerun the algorithm.')
