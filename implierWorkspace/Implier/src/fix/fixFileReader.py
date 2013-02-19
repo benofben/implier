@@ -19,7 +19,6 @@ class fixFileReader:
 		sendingTime = self.myFixParser.getField(52, fields)
 		
 		print('Sending time is ' + sendingTime + '.  Order book length is ' + str(len(self.orderbook)) + '.') 
-		
 				
 		# skip SecurityStatus
 		if msgType == 'f':
@@ -29,13 +28,15 @@ class fixFileReader:
 		else:			
 			mdEntries = self.myFixParser.getMDEntries(fields)
 			for mdEntry in mdEntries:				
-				# I'm just going to treat exchange implied prices as standard prices.  Maybe drop this out later.
+				# I'm just going to treat exchange implied prices as standard prices.  We need to drop this out later.
 				
 				securityDesc = self.myFixParser.getField(107, mdEntry)
 				if not securityDesc in self.orderbook:
 					self.orderbook[securityDesc]={}
 					self.orderbook[securityDesc]['BID']=[None]*10
 					self.orderbook[securityDesc]['OFFER']=[None]*10
+
+				print(securityDesc)
 
 				mdEntryType = self.myFixParser.getFieldandLookup(269, mdEntry)
 				if mdEntryType=='BID' or mdEntryType=='OFFER':
@@ -78,6 +79,8 @@ class fixFileReader:
 				elif mdEntryType=='TRADING_SESSION_LOW_PRICE':
 					pass
 				elif mdEntryType=='SESSION_LOW_OFFER':
+					pass
+				elif mdEntryType=='SESSION_HIGH_BID':
 					pass
 				else:
 					print('Got an mdEntryType I do not know how to deal with ' + str(mdEntryType))

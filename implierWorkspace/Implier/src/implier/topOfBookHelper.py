@@ -36,4 +36,4 @@ def printTopOfBook(topOfBook):
 			print(topOfBook[securityDesc]['LEGS'])
 			print('OFFER ' + str(topOfBook[securityDesc]['OFFER']))
 			print('BID ' + str(topOfBook[securityDesc]['BID']))
-			print('\n\n')
+			print('')

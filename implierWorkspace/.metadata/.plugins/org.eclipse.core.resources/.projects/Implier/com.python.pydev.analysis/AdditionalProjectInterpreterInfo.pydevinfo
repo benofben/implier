@@ -1,0 +1,52 @@
+-- VERSION_3
+-- START DISKCACHE
+/Users/benlackey/Documents/implierWorkspace/.metadata/.plugins/org.eclipse.core.resources/.projects/Implier/com.python.pydev.analysis/v1_indexcache
+.v1_indexcache
+fix.fixFileReader|0|/Users/benlackey/Documents/implierWorkspace/Implier/src/fix/fixFileReader.py
+runImplier|0|/Users/benlackey/Documents/implierWorkspace/Implier/src/runImplier.py
+preprocessor.consolidate|0|/Users/benlackey/Documents/implierWorkspace/Implier/src/preprocessor/consolidate.py
+fix.fixParser|0|/Users/benlackey/Documents/implierWorkspace/Implier/src/fix/fixParser.py
+preprocessor.__init__|0|/Users/benlackey/Documents/implierWorkspace/Implier/src/preprocessor/__init__.py
+implier.implier|0|/Users/benlackey/Documents/implierWorkspace/Implier/src/implier/implier.py
+implier.__init__|0|/Users/benlackey/Documents/implierWorkspace/Implier/src/implier/__init__.py
+implier.topOfBookHelper|0|/Users/benlackey/Documents/implierWorkspace/Implier/src/implier/topOfBookHelper.py
+runConsolidate|0|/Users/benlackey/Documents/implierWorkspace/Implier/src/runConsolidate.py
+fix.__init__|0|/Users/benlackey/Documents/implierWorkspace/Implier/src/fix/__init__.py
+-- END DISKCACHE
+-- START DICTIONARY
+9
+3=fix.fixFileReader
+1=preprocessor.consolidate
+2=fix.fixParser
+6=fixFileReader
+5=implier.implier
+4=implier.topOfBookHelper
+8=fixParser.__init__
+9=fixFileReader.__init__
+7=fixParser
+-- END DICTIONARY
+-- START TREE 1
+9
+con|2|consolidateDay!10@consolidateDays!10@
+fix|2|fixParser!17@fixFileReader!25@
+get|1|getTopOfBook!34@
+nee|1|needToPrintLine!10@
+pri|1|printTopOfBook!34@
+rec|0|
+ref|0|
+run|1|run!42@
+sec|0|
+-- END TREE
+-- START TREE 2
+10
+__d|1|__del__!6&26@
+__i|2|__init__!6&26@__init__!7&18@
+fix|1|FIXDictionary!8&19@
+get|5|getMDEntries!7&18@getFieldandLookup!7&18@getFIXDictionary!7&18@getFields!7&18@getField!7&18@
+inp|1|inputFile!9&27@
+loo|2|lookupFields!7&18@lookupField!7&18@
+myf|1|myFixParser!9&27@
+ord|1|orderbook!9&27@
+pri|1|printOrderBookForSecurity!6&26@
+upd|1|updateOrderBookWithNextLine!6&26@
+-- END TREE

@@ -54,7 +54,7 @@ class fixParser:
 
 	def getFIXDictionary(self):
 		# gives a dictionary that looks like:
-		#	d[fix field number]['name'] = fix field name
+		#	d[fix field number][name] = fix field name
 		#	d[fix field number][field value] = fix field value description
 		d={}
 		
