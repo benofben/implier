@@ -1,27 +1,27 @@
 import fix.fixParser
 import fix.fixFileReader
-import implier.topOfBookHelper
+import implier.formatter
 import implier.algorithm
 import time
 
 def run():
-	inputFilename = '/Users/benlackey/Documents/implierWorkspace/output.txt'
+	inputFilename = '/Users/benlackey/Documents/implier/output.txt'
 	myFixParser = fix.fixParser.fixParser()
 	
 	print('Working on file ' + inputFilename)
 	myFixFileReader = fix.fixFileReader.fixFileReader(inputFilename, myFixParser)
 	
 	while(True):
-		orderbook = myFixFileReader.updateOrderBookWithNextLine()
+		securities = myFixFileReader.updateOrderBookWithNextLine()
 
-		if orderbook:
-			topOfBook = implier.topOfBookHelper.getTopOfBook(orderbook, myFixParser)
-			#implier.topOfBookHelper.printTopOfBook(topOfBook)
+		if securities:
+			simpleSecurities = implier.formatter.reformat(securities, myFixParser)
+			print('Number of securities is ' + str(len(simpleSecurities)) + '.')
 
 			startTime = time.time()
-			implier.algorithm.run(topOfBook)
+			implier.algorithm.run(simpleSecurities)
 			elapsedTime = time.time() - startTime
-			print('It took ' + str(int(elapsedTime)) + ' seconds to run the algorithm.')
+			print('It took ' + str(int(elapsedTime)) + ' seconds to run the algorithm.')			
 		else:
 			# End of file
 			break

@@ -1,0 +1,49 @@
+def reformat(orderbook, myFixParser):
+	'''
+	Returns a simple orderbook with:
+		only the top of the order book, dropping all other entries.
+		eliminates the distinction between bid and ask, instead expressing everything as an individual security such as +SIK2 with a price.
+		prices for buys are positive, sells negative
+	'''
+	
+	simpleOrderbook=[]
+	
+	for securityDesc in orderbook:	
+		### insert logic to handle butterflies later (Silver doesn't seem to have these, or maybe they're in another file)
+		security={}
+		security['LEGS']=securityDesc.split('-')
+		if len(security['LEGS'])>=3:
+			print('Got a butterfly or something similar.')
+			exit()
+		
+		# Handle offers
+		try:
+			security={}
+			security['LEGS']=securityDesc.split('-')
+
+			security['LEGS'][0]='+' + security['LEGS'][0]
+			if len(security['LEGS'])>1:
+				security['LEGS'][1]='-' + security['LEGS'][1]
+
+			security['PRICE']=float(myFixParser.getField(270,orderbook[securityDesc]['OFFER']['OrderBook'][0]))			
+			security['UPDATED']=orderbook[securityDesc]['OFFER']['Updated']
+			simpleOrderbook.append(security)
+		except TypeError:
+			pass
+
+		# Handle bids		
+		try:
+			security={}
+			security['LEGS']=securityDesc.split('-')
+
+			security['LEGS'][0]='-' + security['LEGS'][0]
+			if len(security['LEGS'])>1:
+				security['LEGS'][1]='+' + security['LEGS'][1]
+
+			security['PRICE']=float(myFixParser.getField(270,orderbook[securityDesc]['BID']['LEVELS'][0]))*-1
+			security['UPDATED']=orderbook[securityDesc]['BID']['UPDATED']
+			simpleOrderbook.append(security)
+		except TypeError:
+			pass
+		
+	return simpleOrderbook

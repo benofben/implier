@@ -1,0 +1,48 @@
+def reformat(orderbook, myFixParser):
+	'''
+	Returns a simple orderbook with:
+		only the top of the order book, dropping all other entries.
+		eliminates the distinction between bid and ask, instead expressing everything as an individual security such as +SIK2 with a price.
+	'''
+	
+	simpleOrderbook=[]
+	
+	for securityDesc in orderbook:
+		security={}
+
+		security['LEGS']=securityDesc.split('-')
+		security['LEGS'][0]='+' + security['LEGS'][0]
+		if len(security['LEGS'])>1:
+			security['LEGS'][1]='-' + security['LEGS'][1]
+		
+		### insert logic to handle butterflies later (Silver doesn't seem to have these, or maybe that's in another file)
+		if len(security['LEGS'])==3:
+			print('Got a butterfly')
+		
+		# leave the signs for the offer.
+		try:
+			security['PRICE']=float(myFixParser.getField(270,orderbook[securityDesc]['OFFER'][0]))
+		except TypeError:
+			security['PRICE']=None
+		
+		# reverse the signs for the bid
+		try:
+			security['PRICE']=float(myFixParser.getField(270,orderbook[securityDesc]['BID'][0]))
+		except TypeError:
+			security['PRICE']=None
+
+			
+		# if the bid/ask is null, delete it
+		if security['PRICE'] != None:
+			simpleOrderbook.append(security)
+		
+	return topOfBook
+
+def printSimpleOrderbook(simpleOrderbook):
+	for securityDesc in simpleOrderbook:
+		if simpleOrderbook[securityDesc]['BID'] or simpleOrderbook[securityDesc]['OFFER']:
+			print(securityDesc)
+			print(simpleOrderbook[securityDesc]['LEGS'])
+			print('OFFER ' + str(simpleOrderbook[securityDesc]['OFFER']))
+			print('BID ' + str(simpleOrderbook[securityDesc]['BID']))
+			print('')

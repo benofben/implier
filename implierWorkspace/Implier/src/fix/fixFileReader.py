@@ -2,12 +2,17 @@ class fixFileReader:
 	def __init__(self, inputFilename, myFixParser):
 		self.myFixParser = myFixParser
 		self.inputFile = open(inputFilename)
-		self.orderbook={}
+		self.securities={}
 
 	def __del__(self):			
 		self.inputFile.close()
 
-	def updateOrderBookWithNextLine(self):	
+	def updateOrderBookWithNextLine(self):
+		# Mark the entire order book as not updated
+		for securityDesc in self.securities:
+			for mdEntryType in self.securities[securityDesc]:
+				self.securities[securityDesc][mdEntryType]['UPDATED']=False
+		
 		message=self.inputFile.readline()
 		if len(message)==0:
 			return None
@@ -18,7 +23,7 @@ class fixFileReader:
 		msgType = self.myFixParser.getField(35, fields)
 		sendingTime = self.myFixParser.getField(52, fields)
 		
-		print('Sending time is ' + sendingTime + '.  Order book length is ' + str(len(self.orderbook)) + '.') 
+		print('Sending time is ' + sendingTime + '.') 
 				
 		# skip SecurityStatus
 		if msgType == 'f':
@@ -31,12 +36,16 @@ class fixFileReader:
 				# I'm just going to treat exchange implied prices as standard prices.  We need to drop this out later.
 				
 				securityDesc = self.myFixParser.getField(107, mdEntry)
-				if not securityDesc in self.orderbook:
-					self.orderbook[securityDesc]={}
-					self.orderbook[securityDesc]['BID']=[None]*10
-					self.orderbook[securityDesc]['OFFER']=[None]*10
-
-				print(securityDesc)
+				if not securityDesc in self.securities:
+					self.securities[securityDesc]={}
+					
+					self.securities[securityDesc]['BID']={}
+					self.securities[securityDesc]['BID']['OrderBook']=[None]*10
+					self.securities[securityDesc]['BID']['Updated']=False
+					
+					self.securities[securityDesc]['OFFER']={}
+					self.securities[securityDesc]['OFFER']['OrderBook']=[None]*10
+					self.securities[securityDesc]['OFFER']['Updated']=False
 
 				mdEntryType = self.myFixParser.getFieldandLookup(269, mdEntry)
 				if mdEntryType=='BID' or mdEntryType=='OFFER':
@@ -52,13 +61,15 @@ class fixFileReader:
 	
 						mdUpdateAction = self.myFixParser.getFieldandLookup(279, mdEntry)					
 						if mdUpdateAction=='NEW':
-							self.orderbook[securityDesc][mdEntryType].insert(index, mdEntry)
-							self.orderbook[securityDesc][mdEntryType].pop()
+							self.securities[securityDesc][mdEntryType]['OrderBook'].insert(index, mdEntry)
+							self.securities[securityDesc][mdEntryType]['OrderBook'].pop()
 						elif mdUpdateAction=='CHANGE':
-							self.orderbook[securityDesc][mdEntryType][index]=mdEntry
+							self.securities[securityDesc][mdEntryType]['OrderBook'][index]=mdEntry
 						elif mdUpdateAction=='DELETE':
-							self.orderbook[securityDesc][mdEntryType].pop(index)
-							self.orderbook[securityDesc][mdEntryType].append(9)
+							self.securities[securityDesc][mdEntryType]['OrderBook'].pop(index)
+							self.securities[securityDesc][mdEntryType]['OrderBook'].append(9)
+						
+						self.securities[securityDesc][mdEntryType]['Updated']=True
 						
 				elif mdEntryType=='SETTLEMENT_PRICE':
 					pass
@@ -86,19 +97,19 @@ class fixFileReader:
 					print('Got an mdEntryType I do not know how to deal with ' + str(mdEntryType))
 					exit()
 		
-		return self.orderbook
+		return self.securities
 	
-	def printOrderBookForSecurity(self, securityDesc, orderbook):
+	def printOrderBookForSecurity(self, securityDesc):
 		print(securityDesc)
 		for i in range(9,-1,-1):
 			try:
-				price = self.myFixParser.getField(270,orderbook[securityDesc]['OFFER'][i])
+				price = self.myFixParser.getField(270, self.securities[securityDesc]['OFFER']['OrderBook'][i])
 			except TypeError:
 				price = None
 			print('ASK ' + str(i) + ' ' + str(price))
 		for i in range(0,10):
 			try:
-				price = self.myFixParser.getField(270,orderbook[securityDesc]['BID'][i])
+				price = self.myFixParser.getField(270, self.securities[securityDesc]['BID']['OrderBook'][i])
 			except TypeError:
 				price = None
 			print('BID ' + str(i) + ' ' + str(price))
