@@ -1,0 +1,67 @@
+import fix.fixParser
+import fix.fixFileReader
+import implier.formatter
+import implier.algorithm
+import time
+
+def run():
+	inputFilename = '/Users/benlackey/Documents/implier/output.txt'
+	myFixParser = fix.fixParser.fixParser()
+	
+	print('Working on file ' + inputFilename)
+	myFixFileReader = fix.fixFileReader.fixFileReader(inputFilename, myFixParser)
+	
+	while(True):
+		securities = myFixFileReader.updateOrderBookWithNextLine()
+
+		if securities:
+			simpleSecurities = implier.formatter.reformat(securities, myFixParser)
+			print('Number of securities is ' + str(len(simpleSecurities)) + '.')
+
+			printSpreadMatrix(simpleSecurities)
+
+			'''
+			startTime = time.time()
+			implier.algorithm.run(simpleSecurities)
+			elapsedTime = time.time() - startTime
+			print('It took ' + str(int(elapsedTime)) + ' seconds to run the algorithm.')			
+			'''
+		else:
+			# End of file
+			break
+		
+def printSpreadMatrix(securities):
+	print(securities)
+	
+	# first, let's get a list of all the legs
+	legs=set()
+	for security in securities:
+		for leg in security['Legs']:
+			#ignore the mini contract, XS
+			if not 'XS' in leg:
+				leg = leg.replace('SI','')
+				leg = leg.replace('+','')
+				leg = leg.replace('-','')
+				legs.add(leg)
+
+	#now, reformat securities so it's easier to lookup by leg
+
+
+	
+	spreadMatrix={}
+	for xLeg in legs:
+		spreadMatrix[xLeg]={}
+		for yLeg in legs:
+			if xLeg==yLeg:
+				#then outright
+				spreadMatrix[xLeg][yLeg]['+']=90
+				spreadMatrix[xLeg][yLeg]['-']=80
+			else:
+				# then spread
+				spreadMatrix[xLeg][yLeg]['+']=90
+				spreadMatrix[xLeg][yLeg]['-']=80
+	
+	for xLeg in spreadMatrix:
+		for yLeg in spreadMatrix[xLeg]:
+			pass
+	'''
