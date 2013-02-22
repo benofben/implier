@@ -17,17 +17,13 @@ def run():
 		if securities:
 			simpleSecurities = implier.formatter.reformat(securities, myFixParser)
 			print('Number of securities is ' + str(len(simpleSecurities)) + '.')
+#			printSpreadMatrix(simpleSecurities)
 
-			if len(simpleSecurities)==198:
-				printSpreadMatrix(simpleSecurities)
-				exit()
-				
-			'''
-			startTime = time.time()
-			implier.algorithm.run(simpleSecurities)
-			elapsedTime = time.time() - startTime
-			print('It took ' + str(int(elapsedTime)) + ' seconds to run the algorithm.')			
-			'''
+#			startTime = time.time()
+			if len(simpleSecurities)>=198:
+				implier.algorithm.run(simpleSecurities)
+#			elapsedTime = time.time() - startTime
+#			print('It took ' + str(int(elapsedTime)) + ' seconds to run the algorithm.')			
 		else:
 			# End of file
 			break

@@ -22,7 +22,6 @@ class fixFileReader:
 		
 		msgType = self.myFixParser.getField(35, fields)
 		sendingTime = self.myFixParser.getField(52, fields)
-		
 		print('Sending time is ' + sendingTime + '.') 
 				
 		# skip SecurityStatus
