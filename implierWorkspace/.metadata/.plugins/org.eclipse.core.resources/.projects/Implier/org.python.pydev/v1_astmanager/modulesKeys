@@ -6,6 +6,7 @@ implier.__init__|/Users/benlackey/Documents/implier/implierWorkspace/Implier/src
 implier.algorithm|/Users/benlackey/Documents/implier/implierWorkspace/Implier/src/implier/algorithm.py
 implier.formatter|/Users/benlackey/Documents/implier/implierWorkspace/Implier/src/implier/formatter.py
 implier.implier|/Users/benlackey/Documents/implier/implierWorkspace/Implier/src/implier/implier.py
+implier.printSpreadMatrix|/Users/benlackey/Documents/implier/implierWorkspace/Implier/src/implier/printSpreadMatrix.py
 preprocessor.__init__|/Users/benlackey/Documents/implier/implierWorkspace/Implier/src/preprocessor/__init__.py
 preprocessor.consolidate|/Users/benlackey/Documents/implier/implierWorkspace/Implier/src/preprocessor/consolidate.py
 runConsolidate|/Users/benlackey/Documents/implier/implierWorkspace/Implier/src/runConsolidate.py

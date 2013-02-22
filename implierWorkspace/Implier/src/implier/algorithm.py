@@ -53,7 +53,7 @@ def recursiveSearch(trade, security, securities, outrights, depth):
 
 		# check if we just added a leg that cancels with our pre-existing unmatched leg, in which case we found a trade
 		if trade['UnmatchedLegs'][0]==reverseLeg(trade['UnmatchedLegs'][1]):
-			if(trade['Price']<0):
+			if(trade['Price']<1000):
 				print('Found a trade for ' + str(trade['Price']) + ' with depth ' + str(depth) + '.  ' + str(trade['Securities']))
 			return
 		else:
@@ -62,7 +62,7 @@ def recursiveSearch(trade, security, securities, outrights, depth):
 				leg1=reverseLeg(trade['UnmatchedLegs'][0])
 				leg2=reverseLeg(trade['UnmatchedLegs'][1])
 				price=trade['Price']+outrights[leg1]+outrights[leg2]
-				if price<0:
+				if price<1000:
 					trade['Securities'].append([leg1, outrights[leg1]])
 					trade['Securities'].append([leg2, outrights[leg2]])
 					print('Found an outright trade for ' + str(trade['Price']) + ' with depth ' + str(depth) + '.  ' + str(trade['Securities']))

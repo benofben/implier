@@ -25,9 +25,16 @@ def reformat(securities, myFixParser):
 			if len(security['Legs'])>1:
 				security['Legs'][1]='-' + security['Legs'][1]
 
-			security['Price']=float(myFixParser.getField(270,securities[securityDesc]['OFFER']['OrderBook'][0]))			
-			security['Updated']=securities[securityDesc]['OFFER']['Updated']
-			simpleSecurities.append(security)
+			for level in securities[securityDesc]['OFFER']['OrderBook']:
+				quoteCondition = myFixParser.getFieldandLookup(276, level)
+				if quoteCondition == 'IMPLIED_PRICE':
+					pass
+				else:
+					security['Price']=float(myFixParser.getField(270,level))			
+					security['Updated']=securities[securityDesc]['OFFER']['Updated']
+					simpleSecurities.append(security)
+					break
+							
 		except TypeError:
 			pass
 
@@ -40,9 +47,16 @@ def reformat(securities, myFixParser):
 			if len(security['Legs'])>1:
 				security['Legs'][1]='+' + security['Legs'][1]
 
-			security['Price']=float(myFixParser.getField(270,securities[securityDesc]['BID']['OrderBook'][0]))*-1
-			security['Updated']=securities[securityDesc]['BID']['Updated']
-			simpleSecurities.append(security)
+			for level in securities[securityDesc]['BID']['OrderBook']:
+				quoteCondition = myFixParser.getFieldandLookup(276, level)
+				if quoteCondition == 'IMPLIED_PRICE':
+					pass
+				else:
+					security['Price']=float(myFixParser.getField(270,level))*-1
+					security['Updated']=securities[securityDesc]['BID']['Updated']
+					simpleSecurities.append(security)
+					break
+
 		except TypeError:
 			pass
 		
