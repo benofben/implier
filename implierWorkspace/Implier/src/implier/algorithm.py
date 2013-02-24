@@ -1,18 +1,95 @@
 import copy
 
 def run(securities):
-	outrights={}
+	# split securities into outrights and spreads
+	outrights=[]
 	spreads=[]
 	for security in securities:
 		if len(security['Legs'])==1:
-			outrights[security['Legs'][0]]=security['Price']
+			outrights.append(security)
 		elif len(security['Legs'])==2:
 			spreads.append(security)
+	
+	# compute 1st generation implieds from the outrights
+	impliedSpreads=[]
+	for outright1 in outrights:
+		for outright2 in outrights:
+			#check the outrights are not the same maturity
+			if outright1['Legs'][0][1:]==outright2['Legs'][0][1:]:
+				pass
+			#now make sure the outrights aren't on the same side, eg +,+
+			elif outright1['Legs'][0][0]==outright2['Legs'][0][0]:
+				pass
+			else:
+				impliedSpread={}
+				impliedSpread['Legs']=set()
+				impliedSpread['Legs'].add(outright1['Legs'][0])
+				impliedSpread['Legs'].add(outright2['Legs'][0])
+				impliedSpread['Price']=outright1['Price']+outright2['Price']
+				impliedSpread['Updated']=True
+				impliedSpread['ImpliedFromOutrights']=True
+				impliedSpreads.append(impliedSpread)
+
+	# see if the implied spreads are better priced than the spread and replace them if so.
+	# also add the implieds if a spread is not present
+	for impliedSpread in impliedSpreads:
+		match=False
+		for spread in spreads:
+			if impliedSpread['Legs']==spread['Legs']:
+				match=True
+				if impliedSpread['Price']<spread['Price']:
+					index=spreads.index(spread)
+					spreads.pop(index)
+					spreads.append(impliedSpread)
+		if not match:
+			spreads.append(impliedSpread)
+
+	# split spreads into positive and negative
+	positiveSpreads=[]
+	negativeSpreads=[]
+	for spread in spreads:
+		if spread['Price']>0:
+			positiveSpreads.append(spread)
+		else:
+			negativeSpreads.append(spread)	
 		
+	trade=[]
+	negativeSpreads.sort(key=spreadKey, reverse=False)
+	search(negativeSpreads, trade)
+	
+	'''
 	for spread in spreads:
 		if spread['Updated']==True and spread['Price']<-500:
 			spreadsToPass = copy.deepcopy(spreads)
 			recursiveSearch(None, spread, spreadsToPass, outrights, 1)			
+	'''
+
+def spreadKey(spread):
+	return str(spread['Legs'])
+
+def search(negativeSpreads, trade):	
+	for negativeSpread in negativeSpreads:
+		
+		#enforce an ordering, so we don't do the same thing multiple times
+		if not trade or spreadKey(negativeSpread)>spreadKey(trade[-1]):
+			
+			#check if any of these legs are already in the trade
+			legAlreadyInTrade=False
+			for leg in negativeSpread['Legs']:
+				for security in trade:
+					if leg in security['Legs']:
+						legAlreadyInTrade=True
+			
+			if not legAlreadyInTrade:
+				tradeToPass = copy.deepcopy(trade)
+				tradeToPass.append(negativeSpread)
+				tradeToPass.sort(key=spreadKey, reverse=False)
+
+				negativeSpreadsToPass = copy.deepcopy(negativeSpreads)
+				index = negativeSpreadsToPass.index(negativeSpread)
+				negativeSpreadsToPass.pop(index)
+				
+				search(negativeSpreadsToPass, tradeToPass)
 
 def recursiveSearch(trade, security, securities, outrights, depth):
 	# I don't think there's any nice way to ensure that there are no subcycles in trades made up of outrights only.

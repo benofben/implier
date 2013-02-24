@@ -3,7 +3,6 @@ import fix.fixFileReader
 import implier.formatter
 import implier.algorithm
 import implier.printSpreadMatrix
-import time
 
 def run():
 	inputFilename = '/Users/benlackey/Documents/implier/output.txt'
@@ -22,15 +21,9 @@ def run():
 			simpleSecurities = implier.formatter.reformat(securities, myFixParser)
 			print('Number of securities is ' + str(len(simpleSecurities)) + '.')
 
-			if len(simpleSecurities)==88:
-				implier.printSpreadMatrix.printSpreadMatrix(simpleSecurities)
-				implier.printSpreadMatrix.printSpreadMatrix2(simpleSecurities)
-				exit()
-				
-#			startTime = time.time()
 			implier.algorithm.run(simpleSecurities)
-#			elapsedTime = time.time() - startTime
-#			print('It took ' + str(int(elapsedTime)) + ' seconds to run the algorithm.')			
+#			implier.printSpreadMatrix.printSpreadMatrix(simpleSecurities)
+				
 		else:
 			# End of file
 			break

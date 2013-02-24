@@ -19,11 +19,15 @@ def reformat(securities, myFixParser):
 		# Handle offers
 		try:
 			security={}
-			security['Legs']=securityDesc.split('-')
 
-			security['Legs'][0]='+' + security['Legs'][0]
-			if len(security['Legs'])>1:
-				security['Legs'][1]='-' + security['Legs'][1]
+			temp=securityDesc.split('-')
+			if len(temp)==1:
+				security['Legs']=[]
+				security['Legs'].append('+' + temp[0])
+			elif len(temp)==2:
+				security['Legs']=set()
+				security['Legs'].add('+' + temp[0])
+				security['Legs'].add('-' + temp[1])
 
 			for level in securities[securityDesc]['OFFER']['OrderBook']:
 				quoteCondition = myFixParser.getFieldandLookup(276, level)
@@ -41,11 +45,14 @@ def reformat(securities, myFixParser):
 		# Handle bids		
 		try:
 			security={}
-			security['Legs']=securityDesc.split('-')
 
-			security['Legs'][0]='-' + security['Legs'][0]
-			if len(security['Legs'])>1:
-				security['Legs'][1]='+' + security['Legs'][1]
+			if len(temp)==1:
+				security['Legs']=[]
+				security['Legs'].append('-' + temp[0])
+			elif len(temp)==2:
+				security['Legs']=set()
+				security['Legs'].add('-' + temp[0])
+				security['Legs'].add('+' + temp[1])
 
 			for level in securities[securityDesc]['BID']['OrderBook']:
 				quoteCondition = myFixParser.getFieldandLookup(276, level)

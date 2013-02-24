@@ -1,1 +1,11 @@
-DELSTRimplier.algorithm
+INSTUPimplier.algorithm
+/Users/benlackey/Documents/implier/implierWorkspace/Implier/src/implier/algorithm.py
+INFOS:&&3|1|2|0&&3|3|2|0&&2|4|2|0&&2|5|2|0&&2|6|2|0&&2|7|2|0&&2|8|2|0
+total=1
+implier.algorithm=2
+reverseLeg=8
+spreadKey=5
+maxLength=3
+search=6
+run=4
+recursiveSearch=7

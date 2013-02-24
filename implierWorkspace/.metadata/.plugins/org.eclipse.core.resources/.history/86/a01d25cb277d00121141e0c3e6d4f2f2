@@ -1,0 +1,6 @@
+a=str({'+SIN3', '-SIZ1'})
+b=str({'-SIZ3', '+SIN5'})
+
+print(a<b)
+print(a>b)
+print(a==b)
