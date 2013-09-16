@@ -19,51 +19,30 @@ def reformat(securities, myFixParser):
 		# Handle offers
 		try:
 			security={}
+			security['Legs']=securityDesc.split('-')
 
-			temp=securityDesc.split('-')
-			if len(temp)==1:
-				security['Legs']=[]
-				security['Legs'].append('+' + temp[0])
-			elif len(temp)==2:
-				security['Legs']=set()
-				security['Legs'].add('+' + temp[0])
-				security['Legs'].add('-' + temp[1])
+			security['Legs'][0]='+' + security['Legs'][0]
+			if len(security['Legs'])>1:
+				security['Legs'][1]='-' + security['Legs'][1]
 
-			for level in securities[securityDesc]['OFFER']['OrderBook']:
-				quoteCondition = myFixParser.getFieldandLookup(276, level)
-				if quoteCondition == 'IMPLIED_PRICE':
-					pass
-				else:
-					security['Price']=float(myFixParser.getField(270,level))			
-					security['Updated']=securities[securityDesc]['OFFER']['Updated']
-					simpleSecurities.append(security)
-					break
-							
+			security['Price']=float(myFixParser.getField(270,securities[securityDesc]['OFFER']['OrderBook'][0]))			
+			security['Updated']=securities[securityDesc]['OFFER']['Updated']
+			simpleSecurities.append(security)
 		except TypeError:
 			pass
 
 		# Handle bids		
 		try:
 			security={}
+			security['Legs']=securityDesc.split('-')
 
-			if len(temp)==1:
-				security['Legs']=[]
-				security['Legs'].append('-' + temp[0])
-			elif len(temp)==2:
-				security['Legs']=set()
-				security['Legs'].add('-' + temp[0])
-				security['Legs'].add('+' + temp[1])
+			security['Legs'][0]='-' + security['Legs'][0]
+			if len(security['Legs'])>1:
+				security['Legs'][1]='+' + security['Legs'][1]
 
-			for level in securities[securityDesc]['BID']['OrderBook']:
-				quoteCondition = myFixParser.getFieldandLookup(276, level)
-				if quoteCondition == 'IMPLIED_PRICE':
-					pass
-				else:
-					security['Price']=float(myFixParser.getField(270,level))*-1
-					security['Updated']=securities[securityDesc]['BID']['Updated']
-					simpleSecurities.append(security)
-					break
-
+			security['Price']=float(myFixParser.getField(270,securities[securityDesc]['BID']['OrderBook'][0]))*-1
+			security['Updated']=securities[securityDesc]['BID']['Updated']
+			simpleSecurities.append(security)
 		except TypeError:
 			pass
 		
